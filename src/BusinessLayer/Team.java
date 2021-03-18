@@ -1,41 +1,38 @@
 package BusinessLayer;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 public class Team implements ITeam{
 
-    private int id;
     private String name;
+    private String id;
+    private MeetingChannel defaultChannel;
     private List<MeetingChannel> meetingChannels;
     private List<Academician> owners;
     private List<User> members;
 
     public Team() {
-        MeetingChannel defaultChannel = new MeetingChannel("General", false);
-        this.meetingChannels = new ArrayList<MeetingChannel>();
-        this.meetingChannels.add(defaultChannel);
+
     }
 
-    public Team(int id, String name) {
+    public Team(String name, String id, String defaultChannelName, String defaultChannelMeetingDate) {
         this.id = id;
         this.name = name;
-        MeetingChannel defaultChannel = new MeetingChannel("General", false);
+        this.defaultChannel = new MeetingChannel(defaultChannelName, false, defaultChannelMeetingDate);
         this.meetingChannels = new ArrayList<MeetingChannel>();
-        this.meetingChannels.add(defaultChannel);
         this.owners = new ArrayList<Academician>();
         this.members = new ArrayList<User>();
 
     }
 
-    public int getId() {
+    @Override
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -96,12 +93,12 @@ public class Team implements ITeam{
     }
 
     @Override
-    public void updateMeetingDayOfMeetingChannel(LocalDate localDate, MeetingChannel meetingChannel) {
+    public void updateMeetingDayOfMeetingChannel(String localDate, MeetingChannel meetingChannel) {
         meetingChannel.getMeeting().setDate(localDate);
     }
 
     @Override
-    public void updateMeetingTimeOfMeetingChannel(LocalTime localTime, MeetingChannel meetingChannel) {
+    public void updateMeetingTimeOfMeetingChannel(String localTime, MeetingChannel meetingChannel) {
         meetingChannel.getMeeting().setTime(localTime);
     }
 
@@ -146,8 +143,15 @@ public class Team implements ITeam{
         return null;
     }
 
-
-
-
-
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                ", id='" + id + '\'' +
+                ", defaultChannel=" + defaultChannel +
+                ", meetingChannels=" + meetingChannels +
+                ", owners=" + owners +
+                ", members=" + members +
+                '}';
+    }
 }

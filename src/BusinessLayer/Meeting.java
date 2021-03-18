@@ -1,21 +1,18 @@
 package BusinessLayer;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 public class Meeting {
 
-    private int id;
-    private LocalDate date;
-    private LocalTime time;
+    private static int id;
+    private String date;
+    private String time;
 
     public Meeting() {
+        this.id++;
     }
 
-    public Meeting(int id, LocalDate date, LocalTime time) {
-        this.id = id;
-        this.date = date;
-        this.time = time;
+    public Meeting(String meetingDate) {
+        this.id++;
+        setDateAndTime(meetingDate);
     }
 
     public int getId() {
@@ -26,19 +23,33 @@ public class Meeting {
         this.id = id;
     }
 
-    public LocalDate getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public LocalTime getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(LocalTime time) {
+    public void setTime(String time) {
         this.time = time;
+    }
+
+    private void setDateAndTime(String meetingDate){
+        String[] tokens = meetingDate.split(" ", -1);
+        this.date = tokens[0];
+        this.time = tokens[1] + " " + tokens[2];
+    }
+
+    @Override
+    public String toString() {
+        return "Meeting{" +
+                "date='" + date + '\'' +
+                ", time='" + time + '\'' +
+                '}';
     }
 }

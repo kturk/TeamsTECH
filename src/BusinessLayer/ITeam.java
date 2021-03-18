@@ -1,7 +1,5 @@
 package BusinessLayer;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -15,9 +13,9 @@ public interface ITeam {
 
     public void removeParticipantToMeetingChannel(User user, MeetingChannel meetingChannel);
 
-    public void updateMeetingDayOfMeetingChannel(LocalDate localDate, MeetingChannel meetingChannel);
+    public void updateMeetingDayOfMeetingChannel(String localDate, MeetingChannel meetingChannel);
 
-    public void updateMeetingTimeOfMeetingChannel(LocalTime localTime, MeetingChannel meetingChannel);
+    public void updateMeetingTimeOfMeetingChannel(String localTime, MeetingChannel meetingChannel);
 
     public void addMember(User user);
 
@@ -35,4 +33,5 @@ public interface ITeam {
 
     public Hashtable<String, Integer> getDistinctNumbers();
 
+    public String getId();
 }
