@@ -62,6 +62,7 @@ public class Team implements ITeam{
         this.owners = owners;
     }
 
+    @Override
     public List<User> getMembers() {
         return members;
     }
@@ -143,15 +144,15 @@ public class Team implements ITeam{
         return null;
     }
 
-    @Override
-    public String toString() {
-        return "Team{" +
-                "name='" + name + '\'' +
-                ", id='" + id + '\'' +
-                ", defaultChannel=" + defaultChannel +
-                ", meetingChannels=" + meetingChannels +
-                ", owners=" + owners +
-                ", members=" + members +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Team{" +
+//                "name='" + name + '\'' +
+//                ", id='" + id + '\'' +
+//                ", defaultChannel=" + defaultChannel +
+//                ", meetingChannels=" + meetingChannels +
+//                ", owners=" + owners +
+//                ", members=" + members +
+//                '}';
+//    }
 }

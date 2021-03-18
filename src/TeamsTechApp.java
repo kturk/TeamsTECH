@@ -17,11 +17,11 @@ public class TeamsTechApp {
 
 
         for(int i=0; i<mediator.getUserList().size(); i++) {
-            System.out.println(mediator.getUserList().get(i).toString());
+            System.out.println(mediator.getUserList().get(i));
         }
 
         for(int i=0; i<mediator.getTeamList().size(); i++) {
-            System.out.println(mediator.getTeamList().get(i).toString());
+            System.out.println(mediator.getTeamList().get(i).getMembers().size());
         }
 
 

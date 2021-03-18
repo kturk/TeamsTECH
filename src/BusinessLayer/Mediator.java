@@ -54,27 +54,38 @@ public class Mediator {
             User temp;
             String userType = userLine.get(0);
             String userName = userLine.get(1);
+            String userId = userLine.get(2);
+            String userPassword = userLine.get(4);
+
             ArrayList<String> userTeams = new ArrayList<String>(userLine.subList(5, userLine.size()));
             if(userType.equals("Instructor"))
-                temp = new Instructor(1, userName, "Computer Engineering");
+                if(!userId.equals(""))
+                    temp = new Instructor(Integer.parseInt(userId), userName, userPassword , "Computer Engineering");
+                else
+                    temp = new Instructor(userName, "Computer Engineering");
 
             else if(userType.equals("Teaching Assistant"))
-                temp = new TeachingAssistant(1, userName, "Computer Engineering");
+                if(!userId.equals(""))
+                    temp = new TeachingAssistant(Integer.parseInt(userId), userName, userPassword , "Computer Engineering");
+                else
+                    temp = new TeachingAssistant(userName, "Computer Engineering");
 
             else if(userType.equals("Student"))
-                temp = new Student(1, userName, "Computer Engineering");
-
+                if(!userId.equals(""))
+                    temp = new Student(Integer.parseInt(userId), userName, userPassword , "Computer Engineering");
+                else
+                    temp = new Student(userName, "Computer Engineering");
             else
                 temp = null;
 
-            System.out.println("user" + temp.getName());
+
             for(int i=0; i<userTeams.size(); i++){
                 if(!userTeams.get(i).equals("")){
                     System.out.println("teams" + userTeams.get(i));
                     System.out.println();
                     ITeam currentTeam = getTeamById(userTeams.get(i));
-//                    currentTeam.addMember(temp);
                     temp.addTeam(currentTeam);
+                    currentTeam.addMember(temp);
                 }
             }
 
@@ -83,6 +94,8 @@ public class Mediator {
             this.userList.add(temp);
         }
     }
+
+
 
     public List<ITeam> getTeamList() {
         return teamList;

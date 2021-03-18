@@ -17,11 +17,19 @@ public abstract class User {
         this.teams = new ArrayList<ITeam>();
     }
 
-    public User(int id, String name, String department) {
-        this.id = id;
+    public User(String name, String department) {
+        this.id = 1; // TODO random id
         this.name = name;
 //        this.email = email;
 //        this.password = password;
+        this.department = department;
+        this.teams = new ArrayList<ITeam>();
+    }
+
+    public User(int id, String name, String password, String department) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
         this.department = department;
         this.teams = new ArrayList<ITeam>();
     }
