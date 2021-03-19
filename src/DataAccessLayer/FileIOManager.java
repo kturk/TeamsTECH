@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileLineReader {
+public class FileIOManager {
 
 
     public static List<String> getLines(String filePath) {
