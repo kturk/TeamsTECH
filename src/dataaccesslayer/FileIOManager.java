@@ -1,4 +1,4 @@
-package DataAccessLayer;
+package dataaccesslayer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -20,6 +20,7 @@ public class FileIOManager {
             }
             reader.close();
         }
+
         catch (IOException e) {
             e.printStackTrace();
             System.exit(0);

@@ -1,17 +1,20 @@
-package BusinessLayer;
+package businesslayer;
 
 public class Meeting {
 
+    // TODO should these be id or idCount?
     private static int id;
     private String date;
     private String time;
 
+    // TODO check this.id or not
     public Meeting() {
-        this.id++;
+        id++;
     }
 
     public Meeting(String meetingDate) {
-        this.id++;
+        // TODO check this.id or not
+        id++;
         setDateAndTime(meetingDate);
     }
 
@@ -19,8 +22,9 @@ public class Meeting {
         return id;
     }
 
+    // TODO check this.id or not
     public void setId(int id) {
-        this.id = id;
+        Meeting.id = id;
     }
 
     public String getDate() {

@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 public class TeachingAssistant extends Academician {
 

@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 public abstract class Academician extends User {
 

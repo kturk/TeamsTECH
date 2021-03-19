@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 public class Student extends User {
 

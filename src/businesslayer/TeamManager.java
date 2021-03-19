@@ -1,11 +1,11 @@
-package BusinessLayer;
+package businesslayer;
 
-import DataAccessLayer.DataHandler;
+import dataaccesslayer.DataHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mediator {
+public class TeamManager {
 
     private static final String teamPath = "teamList.csv";
     private static final String userPath = "userList.csv";
@@ -16,7 +16,7 @@ public class Mediator {
     private DataHandler teamDataHandler;
     private DataHandler userDataHandler;
 
-    public Mediator() {
+    public TeamManager() {
         teamList = new ArrayList<ITeam>();
         userList = new ArrayList<User>();
 
@@ -61,17 +61,13 @@ public class Mediator {
 
             switch (userType) {
                 case "Instructor":
-                    temp = createInstructor(userIdList, userName, userId, userPassword);
-                    break;
+                    temp = createInstructor(userIdList, userName, userId, userPassword); break;
                 case "Teaching Assistant":
-                    temp = createTA(userIdList, userName, userId, userPassword);
-                    break;
+                    temp = createTA(userIdList, userName, userId, userPassword); break;
                 case "Student":
-                    temp = createStudent(userIdList, userName, userId, userPassword);
-                    break;
+                    temp = createStudent(userIdList, userName, userId, userPassword); break;
                 default:
-                    temp = null;
-                    break;
+                    temp = null; break;
             }
 
             ArrayList<String> userTeams = new ArrayList<String>(userLine.subList(5, userLine.size()));

@@ -1,4 +1,4 @@
-package DataAccessLayer;
+package dataaccesslayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
