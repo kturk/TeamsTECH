@@ -1,4 +1,4 @@
-package DataAccessLayer;
+package dataaccesslayer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileLineReader {
+public class FileIOManager {
 
 
     public static List<String> getLines(String filePath) {
@@ -20,6 +20,7 @@ public class FileLineReader {
             }
             reader.close();
         }
+
         catch (IOException e) {
             e.printStackTrace();
             System.exit(0);

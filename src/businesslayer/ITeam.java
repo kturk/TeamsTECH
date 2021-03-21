@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 import java.util.Hashtable;
 import java.util.List;
