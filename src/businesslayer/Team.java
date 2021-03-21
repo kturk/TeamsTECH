@@ -23,6 +23,7 @@ public class Team implements ITeam{
         this.owners = new ArrayList<Academician>();
         this.members = new ArrayList<User>();
 
+
     }
 
     @Override
@@ -83,12 +84,12 @@ public class Team implements ITeam{
 
     @Override
     public void addParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
-        meetingChannel.getUserList().add(user);
+        meetingChannel.getParticipants().add(user);
     }
 
     @Override
     public void removeParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
-        meetingChannel.getUserList().remove(user);
+        meetingChannel.getParticipants().remove(user);
     }
 
     @Override
@@ -133,7 +134,7 @@ public class Team implements ITeam{
 
     @Override
     public List<User> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel) {
-        return meetingChannel.getUserList();
+        return meetingChannel.getParticipants();
     }
 
     //TODO
@@ -142,15 +143,54 @@ public class Team implements ITeam{
         return null;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Team{" +
-//                "name='" + name + '\'' +
-//                ", id='" + id + '\'' +
-//                ", defaultChannel=" + defaultChannel +
-//                ", meetingChannels=" + meetingChannels +
-//                ", owners=" + owners +
-//                ", members=" + members +
-//                '}';
-//    }
+
+    public String toCSV() {
+        String name = this.name;
+        String id = this.id;
+        String defaultChannel = this.defaultChannel.getChannelName();
+        String defaultMeetingDay;
+        if (!this.defaultChannel.getMeeting().getDate().equals(""))
+            defaultMeetingDay = this.defaultChannel.getMeeting().getDate() + " " + this.defaultChannel.getMeeting().getTime();
+        else
+            defaultMeetingDay = "";
+        List<String> channelNames = new ArrayList<String>();
+        List<String> meetingDays = new ArrayList<String>();
+        List<String> participants = new ArrayList<String>();
+
+        for(MeetingChannel channel: this.meetingChannels){
+            channelNames.add(channel.getChannelName());
+            if (!channel.getMeeting().getDate().equals(""))
+                meetingDays.add(channel.getMeeting().getDate() + " " + channel.getMeeting().getTime());
+            else
+                meetingDays.add("");
+            char ch='"';
+            List<String> participantIds = new ArrayList<String>();
+            if (channel.getParticipants() != null){
+                for (User user : channel.getParticipants()) {
+                    participantIds.add(Integer.toString(user.getId()));
+                }
+                String participantsString = String.join(", ", participantIds);
+                participants.add(ch + participantsString + ch);
+            }
+            else
+                participants.add("");
+
+        }
+
+        String returnedString = name + "," + id + "," + defaultChannel + "," + defaultMeetingDay;
+
+        for(int i=0; i<channelNames.size(); i++) {
+            if(channelNames.get(i) != null) returnedString += "," + channelNames.get(i);
+            else returnedString += ",";
+
+            if(meetingDays.get(i) != null) returnedString += "," + meetingDays.get(i);
+            else returnedString += ",";
+
+            if(participants.get(i) != null) returnedString += "," + participants.get(i);
+            else returnedString += ",";
+
+        }
+
+        return returnedString;
+    }
 }

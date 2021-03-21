@@ -8,7 +8,7 @@ public class MeetingChannel {
     private String channelName;
     private boolean isPrivate;
     private Meeting meeting;
-    private List<User> userList;
+    private List<User> participants;
 
     // TODO check this.id or not
     public MeetingChannel() {
@@ -55,12 +55,12 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<User> getParticipants() {
+        return participants;
     }
 
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
+    public void setParticipants(List<User> participants) {
+        this.participants = participants;
     }
 
     @Override
@@ -69,7 +69,7 @@ public class MeetingChannel {
                 "channelName='" + channelName + '\'' +
                 ", isPrivate=" + isPrivate +
                 ", meeting=" + meeting +
-                ", userList=" + userList +
+                ", userList=" + participants +
                 '}';
     }
 }

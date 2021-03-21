@@ -44,9 +44,15 @@ public class Meeting {
     }
 
     private void setDateAndTime(String meetingDate){
-        String[] tokens = meetingDate.split(" ", -1);
-        this.date = tokens[0];
-        this.time = tokens[1] + " " + tokens[2];
+        if (meetingDate == null){
+            this.date = "";
+            this.time = "";
+        }
+        else {
+            String[] tokens = meetingDate.split(" ", -1);
+            this.date = tokens[0];
+            this.time = tokens[1] + " " + tokens[2];
+        }
     }
 
     @Override

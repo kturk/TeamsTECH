@@ -42,11 +42,27 @@ public class DataHandler {
     private ArrayList<String> getSplitLine(String line) {
         ArrayList<String> splitLine = new ArrayList<String>();
 
-        String[] tokens = line.split(",", -1);
+        String[] tokens = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1); // Split words with , expect words in quotes
         Arrays.stream(tokens).map(String::trim).toArray(temp -> tokens);
         Collections.addAll(splitLine, tokens);
 
         return splitLine;
+    }
+
+    public List<String> convertListToString (List<ArrayList<String>> data){
+
+        List<String> tempStringList = new ArrayList<String>();
+
+        for(ArrayList<String> lineList : data){
+            String listString = String.join(",", lineList);
+            tempStringList.add(listString);
+        }
+        return tempStringList;
+    }
+
+    public void writeData(List<String> lines) {
+        FileIOManager fileIOManager = new FileIOManager();
+        fileIOManager.setLines(this.filePath, lines);
     }
 
 

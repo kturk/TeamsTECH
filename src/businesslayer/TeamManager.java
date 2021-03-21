@@ -1,6 +1,7 @@
 package businesslayer;
 
 import dataaccesslayer.DataHandler;
+import presentationlayer.TeamManagerView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,8 @@ public class TeamManager {
     private DataHandler teamDataHandler;
     private DataHandler userDataHandler;
 
+    private TeamManagerView teamManagerView;
+
     public TeamManager() {
         teamList = new ArrayList<ITeam>();
         userList = new ArrayList<User>();
@@ -26,11 +29,18 @@ public class TeamManager {
 
         initializeTeamData();
         initializeUserData();
+        initializeOtherChannelsForTeams();
+        initializeTeamOwners();
+        writeTeamsToCSV();
+        writeUsersToCSV();
+
+        teamManagerView = new TeamManagerView();
     }
 
     private void initializeTeamData() {
 
         List<ArrayList<String>> teamData = teamDataHandler.getData();
+        List<String> a = teamDataHandler.convertListToString(teamData);
 
         for (ArrayList<String> teamLine : teamData) {
             ITeam temp;
@@ -43,6 +53,42 @@ public class TeamManager {
             temp = new Team(teamName, teamId, defaultChannelName, defaultChannelMeetingDate);
 
             this.teamList.add(temp);
+        }
+    }
+
+    private void initializeOtherChannelsForTeams() {
+
+        List<ArrayList<String>> teamData = teamDataHandler.getData();
+        List<String> a = teamDataHandler.convertListToString(teamData);
+
+        for (ArrayList<String> teamLine : teamData) {
+
+            String teamId = teamLine.get(1);
+            ITeam currentTeam = getTeamById(teamId);
+            List<ArrayList<String>> otherChannels = new ArrayList<ArrayList<String>>();
+
+            for(int i=4; i<teamLine.size(); i+=3){
+                ArrayList<String> channelDetails = new ArrayList<String>();
+                channelDetails.add(teamLine.get(i).equals("") ? null : teamLine.get(i));
+                channelDetails.add(teamLine.get(i+1).equals("") ? null : teamLine.get(i+1));
+                String participants = teamLine.get(i+2);
+                if(participants.equals("")){
+                    channelDetails.add(null);
+                }
+                else{
+                    participants = participants.substring(1, participants.length()-1);
+                    channelDetails.add(participants);
+                }
+
+                otherChannels.add(channelDetails);
+            }
+
+            for (ArrayList<String> channel : otherChannels){
+                MeetingChannel temp = new MeetingChannel(channel.get(0), true, channel.get(1));
+                List<User> participants = getUserListByIds(channel.get(2));
+                temp.setParticipants(participants);
+                currentTeam.addMeetingChannel(temp);
+            }
         }
     }
 
@@ -73,8 +119,6 @@ public class TeamManager {
             ArrayList<String> userTeams = new ArrayList<String>(userLine.subList(5, userLine.size()));
             for (String userTeam : userTeams) {
                 if (!userTeam.equals("")) {
-                    System.out.println("teams" + userTeam);
-                    System.out.println();
                     ITeam currentTeam = getTeamById(userTeam);
                     temp.addTeam(currentTeam);
                     currentTeam.addMember(temp);
@@ -83,6 +127,17 @@ public class TeamManager {
 
 
             this.userList.add(temp);
+        }
+    }
+
+    private void initializeTeamOwners(){
+        for (User user : userList){
+            if (user.getClass().getSuperclass().getName().equals("businesslayer.Academician")){
+                List<ITeam> userTeams = user.getTeams();
+                for (ITeam team : userTeams){
+                    team.addTeamOwner((Academician) user);
+                }
+            }
         }
     }
 
@@ -154,12 +209,72 @@ public class TeamManager {
     }
 
     private ITeam getTeamById(String id) {
-        for (ITeam t : teamList) {
-            if (t.getId().equals(id))
-                return t;
+        for (ITeam team : teamList) {
+            if (team.getId().equals(id))
+                return team;
         }
         return null;
     }
 
+    private ArrayList<User> getUserListByIds(String ids){
+
+        ArrayList<User> userList = new ArrayList<User>();
+        if (ids == null) return null;
+        String[] userIds = ids.split(",",-1);
+        for(String id : userIds){
+            int intId = Integer.parseInt(id.trim());
+            User currentUser = getUserById(intId);
+            userList.add(currentUser);
+        }
+
+        return userList;
+    }
+
+    private User getUserById(int id) {
+        for(User user: userList){
+            if(user.getId() == id){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private void writeTeamsToCSV(){
+        List<String> teams = new ArrayList<String>();
+        teams.add("Team Name,Team ID,Default Channel,Default Meeting Day and Time,Meeting Channel,Meeting Day and Time,Participant ID");
+        for (ITeam team : teamList){
+            teams.add(team.toCSV());
+        }
+        teamDataHandler.writeData(teams);
+    }
+
+    private void writeUsersToCSV(){
+        List<String> users = new ArrayList<String>();
+        users.add("User Type,User Name,User ID,Email,Password,Team ID,");
+        for (User user : userList){
+            users.add(user.toCSV());
+        }
+        userDataHandler.writeData(users);
+
+    }
+
+    // View Connection
+
+    public void start(){
+        teamManagerView.printWelcome();
+        while(true){
+            credentialsCheck();
+        }
+    }
+
+    public void credentialsCheck(){
+        teamManagerView.getEmail();
+        String email = teamManagerView.getStringInput();
+        teamManagerView.getPassword();
+        String password = teamManagerView.getStringInput();
+
+        System.out.println("email" + email);
+        System.out.println("pass" + password);
+    }
 
 }

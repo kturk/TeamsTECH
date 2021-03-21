@@ -10,19 +10,17 @@ public abstract class User {
     private String name;
     private String email;
     private String password;
-    private String department;
+    private String department; // CSV does not have this column. Assumed as "Computer Engineering"
     private List<ITeam> teams;
 
     public User() {
         this.teams = new ArrayList<ITeam>();
     }
 
+    //TODO INTERFACE
     public User(int id, String name, String department) {
-//        this.id = 1; // TODO random id
-        this.name = name;
         this.id = id;
-//        this.email = email;
-//        this.password = password;
+        this.name = name;
         this.department = department;
         this.teams = new ArrayList<ITeam>();
     }
@@ -104,15 +102,23 @@ public abstract class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", department='" + department + '\'' +
-                ", teams=" + teams +
-                '}';
+    public String toCSV() {
+        StringBuilder builder = new StringBuilder();
+        String classType = this.getClass().getName();
+        if (classType.equals("businesslayer.Instructor"))
+            builder.append("Instructor,");
+        else if (classType.equals("businesslayer.TeachingAssistant"))
+            builder.append("Teaching Assistant,");
+        else
+            builder.append("Student,");
+
+        builder.append(this.name + ",");
+        builder.append(this.id + ",");
+        builder.append(this.email + ",");
+        builder.append(this.password);
+
+        for (ITeam team : teams)
+            builder.append("," + team.getId());
+        return builder.toString();
     }
 }

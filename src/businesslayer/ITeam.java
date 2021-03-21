@@ -36,4 +36,6 @@ public interface ITeam {
     public Hashtable<String, Integer> getDistinctNumbers();
 
     public String getId();
+
+    public String toCSV();
 }
