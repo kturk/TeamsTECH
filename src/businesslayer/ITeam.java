@@ -21,6 +21,8 @@ public interface ITeam {
 
     public List<User> getMembers();
 
+    public String getName();
+
     public void removeMember(User user);
 
     public List<Academician> getTeamOwners();

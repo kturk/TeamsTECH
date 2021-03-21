@@ -63,6 +63,8 @@ public class MeetingChannel {
         this.participants = participants;
     }
 
+    public void addParticipant(User user) { this.participants.add(user); }
+
     @Override
     public String toString() {
         return "MeetingChannel{" +

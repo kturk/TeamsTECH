@@ -21,13 +21,26 @@ public class TeamManagerView {
         System.out.println("Please enter your password: ");
     }
 
-    public void promptChoices(){
-        System.out.print("What would you like to do? "
-                +                                 "1 -> Add a team "
-                + 								  "2 -> Remove a team "
-                + 								  "3 -> Update a team "
-                +  								  "0 -> Exit from the application "
+    public void correctCredentials(String name) {
+        System.out.println("Hello, " + name);
+    }
+
+    public void wrongCredentials() {
+        System.out.println("Your email or password is not correct!\n" +
+                "Please try again.");
+    }
+
+    public void promptMainChoices(){
+        System.out.println("What would you like to do? \n"
+                +                                 "1 -> Add a team \n"
+                + 								  "2 -> Remove a team \n"
+                + 								  "3 -> Update a team \n"
+                +  								  "0 -> Exit from the application \n"
                 +                                 "Please enter a number between 0-3: ");
+    }
+
+    public void wrongInput(){
+        System.out.println("Please enter a valid input.: ");
     }
 
     public void getTeamName(){
@@ -42,36 +55,53 @@ public class TeamManagerView {
         System.out.println("Please enter a name for default meeting channel (Ex. General): ");
     }
 
-    public void getDefaultMeetingDay(){
-        System.out.println("Please enter a day of week for default meeting channel (Ex. Monday): ");
+    public void getDefaultMeetingDayTime(){
+        System.out.println("Please enter a day of week and a time for default meeting channel \n" +
+                "(Ex. Monday 10.45 AM): \n" +
+                "(You can leave this field empty.)");
     }
 
-    public void getDefaultMeetingTime(){
-        System.out.println("Please enter a time for default meeting channel (Ex. 13.30)");
-    }
-
-    // This method is for removing a team
-    public void showTeams(){
+    public void getTeamIdToRemove(){
         System.out.println("Please enter the id of a team that you would like to remove (Ex. CENG431): ");
+    }
+
+    public void getTeamIdToUpdate(){
+        System.out.println("Please enter the id of a team that you would like to update (Ex. CENG431): ");
+    }
+
+    public void promptUpdateTeamChoices(){
+        System.out.println("What would you like to do to update a team? \n"
+                +                                 "1 -> Add a meeting channel \n"
+                + 								  "2 -> Remove a meeting channel \n"
+                + 								  "3 -> Update a meeting channel \n"
+                +  								  "4 -> Add a member \n"
+                +  								  "5 -> Remove a member \n"
+                +  								  "6 -> Add a team owner \n"
+                +  								  "7 -> Show meeting channels and their meetings \n" // TODO check private
+                +  								  "8 -> Show distinct number of members \n"
+                +  								  "0 -> Back \n"
+                +                                 "Please enter a number between 0-8: ");
     }
 
     public void getChannelName(){
         System.out.println("Please enter name of the channel.: ");
     }
 
-    public void getIsChannelPrivate(){
-        System.out.println("Will this channel be private one? (Y/n): ");
-    }
+//    public void getIsChannelPrivate(){
+//        System.out.println("Will this channel be private one? (Y/n): ");
+//    }
 
     public void getChannelMeetingDay(){
-        System.out.println("Please enter a day of week for the meeting channel (Ex. Tuesday): ");
+        System.out.println("Please enter a day of week and a time for meeting channel \n" +
+                "(Ex. Monday 10.45 AM): \n" +
+                "(You can leave this field empty.)");
     }
 
-    public void getMeetingTime(){
-        System.out.println("Please enter a time for the meeting channel (Ex. 15.45)");
-    }
-
-    public String getStringInput(){
+    public String getUserInput(){
         return keyboard.nextLine();
+    } // TODO boolean isRequired attribute
+
+    public void exitMessage() {
+        System.out.println("Thank you for using TeamsTECH application.");
     }
 }

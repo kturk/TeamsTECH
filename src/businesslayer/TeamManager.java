@@ -1,5 +1,6 @@
 package businesslayer;
 
+import businesslayer.exceptions.UnauthorizedUserOperationException;
 import dataaccesslayer.DataHandler;
 import presentationlayer.TeamManagerView;
 
@@ -262,19 +263,246 @@ public class TeamManager {
 
     public void start(){
         teamManagerView.printWelcome();
+        User loggedUser = credentialsCheck();
+        mainLoop(loggedUser);
+    }
+
+    private void mainLoop(User loggedUser) {
         while(true){
-            credentialsCheck();
+            teamManagerView.promptMainChoices();
+            int userChoice = getUserChoice();
+            performUserChoice(loggedUser, userChoice);
         }
     }
 
-    public void credentialsCheck(){
-        teamManagerView.getEmail();
-        String email = teamManagerView.getStringInput();
-        teamManagerView.getPassword();
-        String password = teamManagerView.getStringInput();
 
-        System.out.println("email" + email);
-        System.out.println("pass" + password);
+    private User credentialsCheck(){
+        teamManagerView.getEmail();
+        String email = teamManagerView.getUserInput();
+        teamManagerView.getPassword();
+        String password = teamManagerView.getUserInput();
+        User loggedUser = getUserByCredentials(email, password);
+
+        if (loggedUser != null) {
+            teamManagerView.correctCredentials(loggedUser.getName());
+        }
+        else{
+            teamManagerView.wrongCredentials();
+            credentialsCheck(); // TODO recursion to while
+        }
+        return loggedUser;
     }
 
+    private User getUserByCredentials(String email, String password) {
+        for(User user: userList){
+            if(user.getEmail().equals(email) && user.getPassword().equals(password)){
+                return user;
+            }
+        }
+        return null;
+    }
+
+    private int getUserChoice() {
+        String strInput = teamManagerView.getUserInput();
+        while (true) {
+            if (isNumeric(strInput)) {
+                int intInput = Integer.parseInt(strInput);
+                if (intInput >= 0 && intInput <= 3) {
+                    return intInput;
+                }
+            }
+            teamManagerView.wrongInput();
+            strInput = teamManagerView.getUserInput();
+        }
+    }
+
+    public static boolean isNumeric(String strNum) {
+        if (strNum == null) {
+            return false;
+        }
+        try {
+            int d = Integer.parseInt(strNum);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
+    }
+
+    private void performUserChoice(User loggedUser, int userChoice){
+        switch (userChoice){
+            case 1:
+                try {
+                    addTeam(loggedUser);
+                    break;
+                }
+                catch (UnauthorizedUserOperationException ex){
+                    System.err.println(ex);
+                }
+            case 2:
+                try {
+                    removeTeam(loggedUser);
+                    break;
+                }
+                catch (UnauthorizedUserOperationException ex){
+                    System.err.println(ex);
+                }
+            case 3:
+                updateTeam(loggedUser); break;
+            case 0:
+                exitApplication(); break;
+        }
+    }
+
+    private void addTeam(User loggedUser) throws UnauthorizedUserOperationException {
+        if (loggedUser.getClassType().equals("Academician")){
+            teamManagerView.getTeamName();
+            String teamName = teamManagerView.getUserInput();
+            teamManagerView.getTeamId();
+            String teamId = teamManagerView.getUserInput();
+            teamManagerView.getDefaultChannelName();
+            String defaultChannelName = teamManagerView.getUserInput();
+            teamManagerView.getDefaultMeetingDayTime(); // TODO Check valid week day
+            String meetingDayTime = teamManagerView.getUserInput();
+
+            ITeam newTeam = new Team(teamName, teamId, defaultChannelName, meetingDayTime);
+            newTeam.addTeamOwner((Academician) loggedUser);
+            teamList.add(newTeam);
+            writeTeamsToCSV();
+
+            // TODO max elems in csv to see all in data mode
+        }
+        else {
+            throw new UnauthorizedUserOperationException("Only instructors can create new teams.");
+        }
+
+    }
+
+    private void removeTeam(User loggedUser) throws UnauthorizedUserOperationException{
+        showTeamList();
+        teamManagerView.getTeamIdToRemove();
+        String teamId = teamManagerView.getUserInput();
+        ITeam teamToRemove = getTeamById(teamId);
+        if (teamToRemove.getTeamOwners().contains(loggedUser)) {
+            removeTeamFromUsers(teamToRemove);
+            this.teamList.remove(teamToRemove);
+            writeTeamsToCSV();
+            writeUsersToCSV();
+        }
+        else {
+            throw new UnauthorizedUserOperationException("Only team owners can remove a team.");
+        }
+    }
+
+    private void showTeamList(){ // TODO should this be in view?
+        System.out.println("ID - TEAM NAME");
+        for (ITeam team : teamList){
+            System.out.println(team.getId() + " - " + team.getName());
+        }
+    }
+
+    private void removeTeamFromUsers(ITeam teamToRemove){
+        for (User user : userList){
+            List<ITeam> userTeams = user.getTeams();
+            if (userTeams.contains(teamToRemove))
+                userTeams.remove(teamToRemove); // TODO warn user about wrong input (else)
+        }
+    }
+
+    private void updateTeam(User loggedUser) {
+        ITeam selectedTeam;
+
+        teamManagerView.getTeamIdToRemove();
+        showTeamList();
+        while(true){
+            String teamId = teamManagerView.getUserInput(); // TODO check if exist
+            selectedTeam = getTeamById(teamId);
+            if (selectedTeam != null)
+                break;
+            teamManagerView.wrongInput(); // TODO exit without getting id
+        }
+
+        teamManagerView.promptUpdateTeamChoices();
+        int userUpdateChoice = getUserUpdateChoice();
+        performUserUpdateChoice(loggedUser, userUpdateChoice, selectedTeam);
+    }
+
+    private int getUserUpdateChoice() {
+        String strInput = teamManagerView.getUserInput();
+        while (true) {
+            if (isNumeric(strInput)) {
+                int intInput = Integer.parseInt(strInput);
+                if (intInput >= 0 && intInput <= 8) {
+                    return intInput;
+                }
+            }
+        }
+    }
+
+    private void performUserUpdateChoice(User loggedUser, int userUpdateChoice, ITeam selectedTeam){
+        switch (userUpdateChoice){
+            case 1:
+                addMeetingChannel(loggedUser, selectedTeam); break;
+            case 2:
+                removeMeetingChannel(loggedUser, selectedTeam); break;
+            case 3:
+                updateMeetingChannel(); break;
+            case 4:
+                addMember(); break;
+            case 5:
+                removeMember(); break;
+            case 6:
+                addTeamOwner(); break;
+            case 7:
+                showMeetingChannelDetails(); break;
+            case 8:
+                showDistinctNumbers(); break;
+            case 0:
+                mainLoop(loggedUser); break;
+
+        }
+    }
+
+    private void addMeetingChannel(User loggedUser, ITeam selectedTeam){
+        teamManagerView.getChannelName();
+        String channelName = teamManagerView.getUserInput();
+        teamManagerView.getChannelMeetingDay();
+        String channelMeetingDayTime = teamManagerView.getUserInput();
+
+        MeetingChannel meetingChannel = new MeetingChannel(channelName, true, channelMeetingDayTime);
+        meetingChannel.addParticipant(loggedUser);
+        selectedTeam.addMeetingChannel(meetingChannel);
+    }
+
+    private void removeMeetingChannel(User loggedUser, ITeam selectedTeam){
+        System.out.println();
+    }
+
+    private void updateMeetingChannel(){
+        System.out.println();
+    }
+
+    private void addMember(){
+        System.out.println();
+    }
+
+    private void removeMember(){
+        System.out.println();
+    }
+
+    private void addTeamOwner(){
+        System.out.println();
+    }
+
+    private void showMeetingChannelDetails(){
+        System.out.println();
+    }
+
+    private void showDistinctNumbers(){
+        System.out.println();
+    }
+
+    private void exitApplication(){
+        teamManagerView.exitMessage();
+        System.exit(0);
+    }
 }
