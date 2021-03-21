@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,9 +17,10 @@ public abstract class User {
         this.teams = new ArrayList<ITeam>();
     }
 
-    public User(String name, String department) {
-        this.id = 1; // TODO random id
+    public User(int id, String name, String department) {
+//        this.id = 1; // TODO random id
         this.name = name;
+        this.id = id;
 //        this.email = email;
 //        this.password = password;
         this.department = department;

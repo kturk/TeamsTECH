@@ -1,4 +1,4 @@
-package DataAccessLayer;
+package dataaccesslayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +21,8 @@ public class DataHandler {
     }
 
     private void setData() {
-        FileLineReader fileLineReader = new FileLineReader();
-        List<String> allLines = fileLineReader.getLines(this.filePath);
+        FileIOManager fileIOManager = new FileIOManager();
+        List<String> allLines = fileIOManager.getLines(this.filePath);
         List<ArrayList<String>> temp = getFormattedLines(allLines);
         temp.remove(0);
         this.data = temp;

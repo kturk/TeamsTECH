@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 import java.util.List;
 
@@ -10,12 +10,14 @@ public class MeetingChannel {
     private Meeting meeting;
     private List<User> userList;
 
+    // TODO check this.id or not
     public MeetingChannel() {
-        this.id++;
+        id++;
     }
 
     public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate) {
-        this.id++;
+        // TODO check this.id or not
+        id++;
         this.channelName = channelName;
         this.isPrivate = isPrivate;
         this.meeting = new Meeting(defaultChannelMeetingDate);

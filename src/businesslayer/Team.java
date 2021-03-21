@@ -1,4 +1,4 @@
-package BusinessLayer;
+package businesslayer;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -13,9 +13,7 @@ public class Team implements ITeam{
     private List<Academician> owners;
     private List<User> members;
 
-    public Team() {
-
-    }
+    public Team() {}
 
     public Team(String name, String id, String defaultChannelName, String defaultChannelMeetingDate) {
         this.id = id;
