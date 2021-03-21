@@ -14,11 +14,11 @@ public class MeetingChannel {
         this.id++;
     }
 
-    public MeetingChannel(String channelName, boolean isPrivate) {
+    public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate) {
         this.id++;
         this.channelName = channelName;
         this.isPrivate = isPrivate;
-        this.meeting = null;
+        this.meeting = new Meeting(defaultChannelMeetingDate);
     }
 
     public static int getId() {
@@ -59,5 +59,15 @@ public class MeetingChannel {
 
     public void setUserList(List<User> userList) {
         this.userList = userList;
+    }
+
+    @Override
+    public String toString() {
+        return "MeetingChannel{" +
+                "channelName='" + channelName + '\'' +
+                ", isPrivate=" + isPrivate +
+                ", meeting=" + meeting +
+                ", userList=" + userList +
+                '}';
     }
 }

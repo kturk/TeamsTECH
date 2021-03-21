@@ -2,6 +2,7 @@ package BusinessLayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public abstract class User {
 
@@ -10,19 +11,27 @@ public abstract class User {
     private String email;
     private String password;
     private String department;
-    private List<Team> teams;
+    private List<ITeam> teams;
 
     public User() {
-        this.teams = new ArrayList<Team>();
+        this.teams = new ArrayList<ITeam>();
     }
 
-    public User(int id, String name, String email, String password, String department) {
+    public User(String name, String department) {
+        this.id = 1; // TODO random id
+        this.name = name;
+//        this.email = email;
+//        this.password = password;
+        this.department = department;
+        this.teams = new ArrayList<ITeam>();
+    }
+
+    public User(int id, String name, String password, String department) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.password = password;
         this.department = department;
-        this.teams = new ArrayList<Team>();
+        this.teams = new ArrayList<ITeam>();
     }
 
     public int getId() {
@@ -65,11 +74,44 @@ public abstract class User {
         this.department = department;
     }
 
-    public List<Team> getTeams() {
+    public List<ITeam> getTeams() {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
+    public void setTeams(List<ITeam> teams) {
         this.teams = teams;
+    }
+
+    public void addTeam(ITeam team){
+        this.teams.add(team);
+    }
+
+    public void initializeEmail(String domain) {
+        String tempName = this.name.replaceAll("\\s","").toLowerCase();
+        this.email = tempName + domain;
+    }
+
+    public void initializePassword(){
+        String password = "";
+        Random rand = new Random();
+        String alphabet = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+        for(int i=0; i < 4; i++){
+            int randomIndex = rand.nextInt(alphabet.length());
+            password = password + alphabet.charAt(randomIndex);
+        }
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", department='" + department + '\'' +
+                ", teams=" + teams +
+                '}';
     }
 }
