@@ -10,6 +10,14 @@ import java.util.List;
 
 public class TeamManager {
 
+    // TODO User to IUser
+    // TODO input validation check (empty day)
+    // TODO writeFile comma deletion when empty
+    // TODO success and failure messages
+    // TODO UML
+    // TODO backing from any screen
+    // TODO general refactor
+
     private static final String teamPath = "teamList.csv";
     private static final String userPath = "userList.csv";
 
@@ -495,6 +503,7 @@ public class TeamManager {
         MeetingChannel meetingChannel = new MeetingChannel(channelName, true, channelMeetingDayTime);
         meetingChannel.addParticipant(loggedUser);
         selectedTeam.addMeetingChannel(meetingChannel);
+        writeTeamsToCSV();
     }
 
     private void removeMeetingChannel(User loggedUser, ITeam selectedTeam){
@@ -576,6 +585,7 @@ public class TeamManager {
         String userIds = teamManagerView.getUserInput();
         String[] userIdArray = userIds.split(",");
         addUsersToChannel(meetingChannel, userIdArray);
+        writeTeamsToCSV();
     }
 
     private void showMembers(List<User> teamMembers){
@@ -610,6 +620,7 @@ public class TeamManager {
         teamManagerView.getChannelMeetingDayTime();
         String dateTime = teamManagerView.getUserInput();
         meetingChannel.getMeeting().setDateAndTime(dateTime);
+        writeTeamsToCSV();
     }
 
     private void addMember(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
@@ -621,6 +632,7 @@ public class TeamManager {
             String userIds = teamManagerView.getUserInput();
             String[] userIdArray = userIds.split(",");
             addUsersToTeam(selectedTeam, userIdArray);
+            writeUsersToCSV();
         }
         else{
             throw new UnauthorizedUserOperationException("Only academicians can add new members.");
@@ -641,6 +653,7 @@ public class TeamManager {
             String userIds = teamManagerView.getUserInput();
             String[] userIdArray = userIds.split(",");
             removeUsersFromTeam(selectedTeam, userIdArray);
+            writeUsersToCSV();
         }
         else{
             throw new UnauthorizedUserOperationException("Only academicians can remove members.");
