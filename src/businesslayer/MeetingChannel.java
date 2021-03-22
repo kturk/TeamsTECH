@@ -1,34 +1,33 @@
 package businesslayer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class MeetingChannel {
 
-    private static int id;
+    private static int count = 0;
+    private int id;
     private String channelName;
-    private boolean isPrivate;
+    private boolean isPrivate; // CSV does not have this column. Assumed as "true" except default channel.
     private Meeting meeting;
-    private List<IUser> participants;
+    private TeamManager manager;
 
-    public MeetingChannel() {
-        id++;
+    public MeetingChannel(TeamManager manager) {
+        this.setId(++count);
+        this.manager = manager;
     }
 
-    public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate) {
-        id++;
+    public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate, TeamManager manager) {
+        this.setId(++count);
         this.channelName = channelName;
         this.isPrivate = isPrivate;
         this.meeting = new Meeting(defaultChannelMeetingDate);
-        this.participants = new ArrayList<IUser>();
+        this.manager = manager;
     }
 
-    public static int getId() {
+    public int getId() {
         return id;
     }
 
-    public static void setId(int id) {
-        MeetingChannel.id = id;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getChannelName() {
@@ -55,25 +54,12 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
-    public List<IUser> getParticipants() {
-        return participants;
-    }
-
-    public void setParticipants(List<IUser> participants) {
-        this.participants = participants;
-    }
-
-    public void addParticipant(IUser user) { this.participants.add(user); }
-
-    public void removeParticipant(IUser user) { this.participants.remove(user); }
-
     @Override
     public String toString() {
         return "MeetingChannel{" +
                 "channelName='" + channelName + '\'' +
                 ", isPrivate=" + isPrivate +
                 ", meeting=" + meeting +
-                ", userList=" + participants +
                 '}';
     }
 }

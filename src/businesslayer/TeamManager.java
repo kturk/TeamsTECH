@@ -4,9 +4,7 @@ import businesslayer.exceptions.UnauthorizedUserOperationException;
 import dataaccesslayer.DataHandler;
 import presentationlayer.TeamManagerView;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 public class TeamManager {
 
@@ -29,13 +27,17 @@ public class TeamManager {
 
     private TeamManagerView teamManagerView;
 
+    private Map<ITeam, List<IUser>> teamUserMap = new HashMap<ITeam, List<IUser>>();
+    private Map<ITeam, List<MeetingChannel>> teamChannelMap = new HashMap<ITeam, List<MeetingChannel>>();
+    private Map<MeetingChannel, List<IUser>> channelUserMap = new HashMap<MeetingChannel, List<IUser>>();
+    private Map<ITeam, List<IUser>> teamOwnerMap = new HashMap<ITeam, List<IUser>>();
+
     public TeamManager() {
         teamList = new ArrayList<ITeam>();
         userList = new ArrayList<IUser>();
 
         teamDataHandler = new DataHandler(teamPath);
         userDataHandler = new DataHandler(userPath);
-
 
         initializeTeamData();
         initializeUserData();
@@ -53,29 +55,85 @@ public class TeamManager {
         List<String> a = teamDataHandler.convertListToString(teamData);
 
         for (ArrayList<String> teamLine : teamData) {
-            ITeam temp;
+            ITeam tempTeam;
             String teamName = teamLine.get(0);
             String teamId = teamLine.get(1);
+            tempTeam = new Team(teamName, teamId);
+            this.teamList.add(tempTeam);
+
             String defaultChannelName = teamLine.get(2);
-            String defaultChannelMeetingDate = teamLine.get(3);
+            String defaultChannelMeetingDateTime = teamLine.get(3);
+            MeetingChannel defaultChannel = new MeetingChannel(
+                    defaultChannelName,
+                    false,
+                    defaultChannelMeetingDateTime,
+                    this);
+            ArrayList<MeetingChannel> channelList = new ArrayList<MeetingChannel>();
+            channelList.add(defaultChannel);
+            teamChannelMap.put(tempTeam, channelList);
+            teamUserMap.put(tempTeam, new ArrayList<IUser>());
+            channelUserMap.put(defaultChannel, new ArrayList<IUser>());
+            teamOwnerMap.put(tempTeam, new ArrayList<IUser>());
 
-
-            temp = new Team(teamName, teamId, defaultChannelName, defaultChannelMeetingDate);
-
-            this.teamList.add(temp);
         }
+    }
+
+    private void initializeUserData() {
+
+        List<ArrayList<String>> userData = userDataHandler.getData();
+        List<Integer> userIdList = new ArrayList<Integer>();
+
+        for (ArrayList<String> userLine : userData) {
+            IUser tempUser;
+            String userType = userLine.get(0);
+            String userName = userLine.get(1);
+            String userId = userLine.get(2);
+            String userPassword = userLine.get(4);
+
+
+            switch (userType) {
+                case "Instructor":
+                    tempUser = createInstructor(userIdList, userName, userId, userPassword); break;
+                case "Teaching Assistant":
+                    tempUser = createTA(userIdList, userName, userId, userPassword); break;
+                case "Student":
+                    tempUser = createStudent(userIdList, userName, userId, userPassword); break;
+                default:
+                    tempUser = null; break;
+            }
+            this.userList.add(tempUser);
+
+            ArrayList<String> userTeams = new ArrayList<String>(userLine.subList(5, userLine.size()));
+            for (String userTeam : userTeams) {
+                if (!userTeam.equals("")) {
+                    ITeam currentTeam = getTeamById(userTeam);
+                    teamUserMap.get(currentTeam).add(tempUser);
+                    List<MeetingChannel> channels = teamChannelMap.get(currentTeam);
+                    MeetingChannel defaultChannel = getDefaultChannel(channels);
+                    channelUserMap.get(defaultChannel).add(tempUser);
+                }
+            }
+        }
+    }
+
+    private MeetingChannel getDefaultChannel(List<MeetingChannel> channels){
+        for (MeetingChannel channel : channels){
+            if (!channel.isPrivate())
+                return channel;
+        }
+        return null;
     }
 
     private void initializeOtherChannelsForTeams() {
 
         List<ArrayList<String>> teamData = teamDataHandler.getData();
-        List<String> a = teamDataHandler.convertListToString(teamData);
+//        List<String> a = teamDataHandler.convertListToString(teamData);
 
         for (ArrayList<String> teamLine : teamData) {
 
-            String teamId = teamLine.get(1);
-            ITeam currentTeam = getTeamById(teamId);
-            List<ArrayList<String>> otherChannels = new ArrayList<ArrayList<String>>();
+//            String teamId = teamLine.get(1);
+//            ITeam currentTeam = getTeamById(teamId);
+//            List<ArrayList<String>> otherChannels = new ArrayList<ArrayList<String>>();
 
             for(int i=4; i<teamLine.size(); i+=3){
                 ArrayList<String> channelDetails = new ArrayList<String>();
@@ -89,64 +147,32 @@ public class TeamManager {
                     participants = participants.substring(1, participants.length()-1);
                     channelDetails.add(participants);
                 }
-
-                otherChannels.add(channelDetails);
+                MeetingChannel tempChannel = new MeetingChannel(
+                        channelDetails.get(0),
+                        true,
+                        channelDetails.get(1),
+                        this);
+                List<IUser> members = getUserListByIds(channelDetails.get(2));
+                channelUserMap.put(tempChannel, members);
+//                otherChannels.add(channelDetails);
             }
 
-            for (ArrayList<String> channel : otherChannels){
-                MeetingChannel temp = new MeetingChannel(channel.get(0), true, channel.get(1));
-                List<IUser> participants = getUserListByIds(channel.get(2));
-                temp.setParticipants(participants);
-                currentTeam.addMeetingChannel(temp);
-            }
+//            for (ArrayList<String> channel : otherChannels){
+//                MeetingChannel tempChannel = new MeetingChannel(channel.get(0), true, channel.get(1));
+//                List<IUser> participants = getUserListByIds(channel.get(2));
+//                tempChannel.setParticipants(participants);
+//                currentTeam.addMeetingChannel(tempChannel);
+//            }
         }
     }
 
-    private void initializeUserData() {
-
-        List<ArrayList<String>> userData = userDataHandler.getData();
-        List<Integer> userIdList = new ArrayList<Integer>();
-
-        for (ArrayList<String> userLine : userData) {
-            IUser temp;
-            String userType = userLine.get(0);
-            String userName = userLine.get(1);
-            String userId = userLine.get(2);
-            String userPassword = userLine.get(4);
-
-
-            switch (userType) {
-                case "Instructor":
-                    temp = createInstructor(userIdList, userName, userId, userPassword); break;
-                case "Teaching Assistant":
-                    temp = createTA(userIdList, userName, userId, userPassword); break;
-                case "Student":
-                    temp = createStudent(userIdList, userName, userId, userPassword); break;
-                default:
-                    temp = null; break;
-            }
-
-            ArrayList<String> userTeams = new ArrayList<String>(userLine.subList(5, userLine.size()));
-            for (String userTeam : userTeams) {
-                if (!userTeam.equals("")) {
-                    ITeam currentTeam = getTeamById(userTeam);
-                    temp.addTeam(currentTeam);
-                    currentTeam.addMember(temp);
-                }
-            }
-
-
-            this.userList.add(temp);
-        }
-    }
 
     private void initializeTeamOwners(){
-        for (IUser user : userList){
-            if (user.getClass().getSuperclass().getName().equals("businesslayer.Academician")){ // TODO fix
-                List<ITeam> userTeams = user.getTeams();
-                for (ITeam team : userTeams){
-                    team.addTeamOwner((Academician) user);
-                }
+        for (Map.Entry<ITeam, List<IUser>> entry : teamUserMap.entrySet()) {
+            ITeam team = entry.getKey();
+            for (IUser user : entry.getValue()){
+                if (user.getClassType().equals("Academician"))
+                    teamOwnerMap.get(team).add(user);
             }
         }
     }
@@ -265,7 +291,6 @@ public class TeamManager {
             users.add(user.toCSV());
         }
         userDataHandler.writeData(users);
-
     }
 
     // View Connection
@@ -375,7 +400,7 @@ public class TeamManager {
             teamManagerView.getDefaultMeetingDayTime(); // TODO Check valid week day
             String meetingDayTime = teamManagerView.getUserInput();
 
-            ITeam newTeam = new Team(teamName, teamId, defaultChannelName, meetingDayTime);
+            ITeam newTeam = new Team(teamName, teamId);
             newTeam.addTeamOwner((Academician) loggedIUser);
             teamList.add(newTeam);
             writeTeamsToCSV();
@@ -500,7 +525,7 @@ public class TeamManager {
         teamManagerView.getChannelMeetingDayTime();
         String channelMeetingDayTime = teamManagerView.getUserInput();
 
-        MeetingChannel meetingChannel = new MeetingChannel(channelName, true, channelMeetingDayTime);
+        MeetingChannel meetingChannel = new MeetingChannel(channelName, true, channelMeetingDayTime, this);
         meetingChannel.addParticipant(loggedIUser);
         selectedTeam.addMeetingChannel(meetingChannel);
         writeTeamsToCSV();

@@ -11,17 +11,14 @@ public abstract class User implements IUser {
     private String email;
     private String password;
     private String department; // CSV does not have this column. Assumed as "Computer Engineering"
-    private List<ITeam> teams;
 
-    public User() {
-        this.teams = new ArrayList<ITeam>();
-    }
+
+    public User() {    }
 
     public User(int id, String name, String department) {
         this.id = id;
         this.name = name;
         this.department = department;
-        this.teams = new ArrayList<ITeam>();
     }
 
     public User(int id, String name, String password, String department) {
@@ -29,7 +26,6 @@ public abstract class User implements IUser {
         this.name = name;
         this.password = password;
         this.department = department;
-        this.teams = new ArrayList<ITeam>();
     }
 
     @Override
@@ -82,20 +78,20 @@ public abstract class User implements IUser {
         this.department = department;
     }
 
-    @Override
-    public List<ITeam> getTeams() {
-        return teams;
-    }
-
-    @Override
-    public void setTeams(List<ITeam> teams) {
-        this.teams = teams;
-    }
-
-    @Override
-    public void addTeam(ITeam team){
-        this.teams.add(team);
-    }
+//    @Override
+//    public List<ITeam> getTeams() {
+//        return teams;
+//    }
+//
+//    @Override
+//    public void setTeams(List<ITeam> teams) {
+//        this.teams = teams;
+//    }
+//
+//    @Override
+//    public void addTeam(ITeam team){
+//        this.teams.add(team);
+//    }
 
     @Override
     public void initializeEmail(String domain) {
@@ -120,9 +116,9 @@ public abstract class User implements IUser {
     public String toCSV() {
         StringBuilder builder = new StringBuilder();
         String classType = this.getClass().getName();
-        if (classType.equals("businesslayer.Instructor"))
+        if (classType.equals("businesslayer.Instructor")) // TODO fix
             builder.append("Instructor,");
-        else if (classType.equals("businesslayer.TeachingAssistant"))
+        else if (classType.equals("businesslayer.TeachingAssistant")) // TODO fix
             builder.append("Teaching Assistant,");
         else
             builder.append("Student,");
