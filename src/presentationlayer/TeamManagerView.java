@@ -107,6 +107,10 @@ public class TeamManagerView {
         System.out.println("Please enter the id of the user: ");
     }
 
+    public void getMembers(String teamId){
+        System.out.println("\nMembers of " + teamId + ": ");
+    }
+
 //    public void getIsChannelPrivate(){
 //        System.out.println("Will this channel be private one? (Y/n): ");
 //    }
@@ -123,6 +127,18 @@ public class TeamManagerView {
 
     public void getUserIdToRemove(){
         System.out.println("Please enter user ids to remove into channel. (Ex. 45,97,33): ");
+    }
+
+    public void userNotAMember(String name){
+        System.out.println(name + " is not a member of this team.");
+    }
+
+    public void teamOwnerSuccess(String name){
+        System.out.println(name + " is now a team owner.");
+    }
+
+    public void getCurrentTeamOwners(String teamId){
+        System.out.println("Team Owners of " + teamId + ": ");
     }
 
     public String getUserInput(){

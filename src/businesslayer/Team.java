@@ -121,8 +121,8 @@ public class Team implements ITeam{
 //    }
 
     @Override
-    public void addTeamOwner(Academician academician) {
-        this.getTeamOwners().add(academician);
+    public void addTeamOwner(User user) {
+        this.getTeamOwners().add(user);
     }
 
 

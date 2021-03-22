@@ -452,8 +452,16 @@ public class TeamManager {
             case 5:
                 removeMember(); break;
             case 6:
-                addTeamOwner(loggedUser, selectedTeam); break;
+                System.out.println("6");
+                try {
+                    addTeamOwner(loggedUser, selectedTeam); break;
+                }
+                catch(UnauthorizedUserOperationException ex){
+                    System.err.println(ex);
+                    break;
+                }
             case 7:
+                System.out.println("7");
                 showMeetingChannelDetails(selectedTeam); break;
             case 8:
                 showDistinctNumbers(selectedTeam); break;
@@ -596,19 +604,46 @@ public class TeamManager {
     }
 
     private void addTeamOwner(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
-        List<User> currentOwners = new ArrayList<User>();
-
+        List<User> currentOwners = selectedTeam.getTeamOwners();
+        List<User> members = new ArrayList<User>(selectedTeam.getMembers());
+        members.removeAll(currentOwners);
         if(currentOwners.contains(loggedUser)){
-            teamManagerView.getUserId();
-            String userId = teamManagerView.getUserInput();
-            boolean isValid = false;
-            if()
+            teamManagerView.getCurrentTeamOwners(selectedTeam.getId());
+            showMembers(currentOwners);
 
+            teamManagerView.getMembers(selectedTeam.getId());
+            showMembers(members);
+            teamManagerView.getUserId();
+
+            User newOwner = null;
+            boolean isValid = false;
+            while (!isValid) {
+                String userIdStr = teamManagerView.getUserInput();
+                if (isNumeric(userIdStr)){
+                    int intInput = Integer.parseInt(userIdStr);
+
+                    User tempUser = getUserById(intInput);
+                    if(tempUser == null){
+                        teamManagerView.wrongInput();
+                    }
+                    else{
+                        if(members.contains(tempUser)){
+                            isValid = true;
+                            newOwner = tempUser;
+                            teamManagerView.teamOwnerSuccess(newOwner.getName());
+                        }
+                        else{
+                            teamManagerView.userNotAMember(tempUser.getName());
+                        }
+                    }
+                }
+                else teamManagerView.wrongInput();
+            }
+            if(newOwner != null) selectedTeam.addTeamOwner(newOwner);
         }
         else{
             throw new UnauthorizedUserOperationException();
         }
-        System.out.println();
     }
 
     private void showMeetingChannelDetails(ITeam selectedTeam){ //TODO getuserchannels add
@@ -635,6 +670,7 @@ public class TeamManager {
         System.out.println("Number of Teaching Assistants: " + distinctNumbers.get("Teaching Assistant").toString());
 
     }
+
 
     private void exitApplication(){
         teamManagerView.exitMessage();

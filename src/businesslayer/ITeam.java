@@ -27,7 +27,7 @@ public interface ITeam {
 
     public List<User> getTeamOwners();
 
-    public void addTeamOwner(Academician academician);
+    public void addTeamOwner(User user);
 
     public List<MeetingChannel> getMeetingChannels();
 
