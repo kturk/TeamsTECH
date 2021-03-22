@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public abstract class User {
+public abstract class User implements IUser {
 
     private int id;
     private String name;
@@ -17,7 +17,6 @@ public abstract class User {
         this.teams = new ArrayList<ITeam>();
     }
 
-    //TODO INTERFACE
     public User(int id, String name, String department) {
         this.id = id;
         this.name = name;
@@ -33,63 +32,78 @@ public abstract class User {
         this.teams = new ArrayList<ITeam>();
     }
 
+    @Override
     public int getId() {
         return id;
     }
 
+    @Override
     public void setId(int id) {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getEmail() {
         return email;
     }
 
+    @Override
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public String getDepartment() {
         return department;
     }
 
+    @Override
     public void setDepartment(String department) {
         this.department = department;
     }
 
+    @Override
     public List<ITeam> getTeams() {
         return teams;
     }
 
+    @Override
     public void setTeams(List<ITeam> teams) {
         this.teams = teams;
     }
 
+    @Override
     public void addTeam(ITeam team){
         this.teams.add(team);
     }
 
+    @Override
     public void initializeEmail(String domain) {
         String tempName = this.name.replaceAll("\\s","").toLowerCase();
         this.email = tempName + domain;
     }
 
+    @Override
     public void initializePassword(){
         String password = "";
         Random rand = new Random();
@@ -102,23 +116,7 @@ public abstract class User {
         this.password = password;
     }
 
-//    public String getClassType(){
-//        String type = this.getClass().getName();
-//        switch (type){
-//            case "businesslayer.Instructor":
-//            case "businesslayer.TeachingAssistant":
-//                return "Academician";
-//            default:
-//                return "Student";
-//        }
-//    }
-
-    public abstract String getClassType();
-
-
-    public abstract String getClassName();
-
-
+    @Override
     public String toCSV() {
         StringBuilder builder = new StringBuilder();
         String classType = this.getClass().getName();

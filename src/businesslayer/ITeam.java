@@ -9,31 +9,31 @@ public interface ITeam {
 
     public void removeMeetingChannel(MeetingChannel meetingChannel);
 
-    public void addParticipantToMeetingChannel(User user, MeetingChannel meetingChannel);
+    public void addParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel);
 
-    public void removeParticipantToMeetingChannel(User user, MeetingChannel meetingChannel);
+    public void removeParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel);
 
     public void updateMeetingDayOfMeetingChannel(String localDate, MeetingChannel meetingChannel);
 
     public void updateMeetingTimeOfMeetingChannel(String localTime, MeetingChannel meetingChannel);
 
-    public void addMember(User user);
+    public void addMember(IUser user);
 
-    public List<User> getMembers();
+    public List<IUser> getMembers();
 
     public String getName();
 
-    public void removeMember(User user);
+    public void removeMember(IUser user);
 
-    public List<User> getTeamOwners();
+    public List<IUser> getTeamOwners();
 
-    public void addTeamOwner(User user);
+    public void addTeamOwner(IUser user);
 
     public List<MeetingChannel> getMeetingChannels();
 
     public String getMeetingTimeOfMeetingChannel(MeetingChannel meetingChannel);
 
-    public List<User> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel);
+    public List<IUser> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel);
 
     public Hashtable<String, Integer> getDistinctNumbers();
 

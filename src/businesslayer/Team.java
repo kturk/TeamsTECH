@@ -10,8 +10,8 @@ public class Team implements ITeam{
     private String id;
     private MeetingChannel defaultChannel;
     private List<MeetingChannel> meetingChannels;
-    private List<User> owners;
-    private List<User> members;
+    private List<IUser> owners;
+    private List<IUser> members;
 
     public Team() {}
 
@@ -20,8 +20,8 @@ public class Team implements ITeam{
         this.name = name;
         this.defaultChannel = new MeetingChannel(defaultChannelName, false, defaultChannelMeetingDate);
         this.meetingChannels = new ArrayList<MeetingChannel>();
-        this.owners = new ArrayList<User>();
-        this.members = new ArrayList<User>();
+        this.owners = new ArrayList<IUser>();
+        this.members = new ArrayList<IUser>();
     }
 
     @Override
@@ -51,20 +51,20 @@ public class Team implements ITeam{
     }
 
     @Override
-    public List<User> getTeamOwners() {
+    public List<IUser> getTeamOwners() {
         return owners;
     }
 
-    public void setOwners(List<User> owners) {
+    public void setOwners(List<IUser> owners) {
         this.owners = owners;
     }
 
     @Override
-    public List<User> getMembers() {
+    public List<IUser> getMembers() {
         return members;
     }
 
-    public void setMembers(List<User> members) {
+    public void setMembers(List<IUser> members) {
         this.members = members;
     }
 
@@ -82,12 +82,12 @@ public class Team implements ITeam{
     }
 
     @Override
-    public void addParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
+    public void addParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel) {
         meetingChannel.getParticipants().add(user);
     }
 
     @Override
-    public void removeParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
+    public void removeParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel) {
         meetingChannel.getParticipants().remove(user);
     }
 
@@ -102,13 +102,13 @@ public class Team implements ITeam{
     }
 
     @Override
-    public void addMember(User user) {
+    public void addMember(IUser user) {
         this.members.add(user);
         this.getDefaultChannel().addParticipant(user);
     }
 
     @Override
-    public void removeMember(User user) {
+    public void removeMember(IUser user) {
         if(this.members.size() > 0){
             this.members.remove(user);
         }
@@ -121,7 +121,7 @@ public class Team implements ITeam{
 //    }
 
     @Override
-    public void addTeamOwner(User user) {
+    public void addTeamOwner(IUser user) {
         this.getTeamOwners().add(user);
     }
 
@@ -133,7 +133,7 @@ public class Team implements ITeam{
     }
 
     @Override
-    public List<User> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel) {
+    public List<IUser> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel) {
         return meetingChannel.getParticipants();
     }
 
@@ -148,7 +148,7 @@ public class Team implements ITeam{
         int instructorNumber = 0;
         int teachingAssistantNumber = 0;
 
-        for(User user: this.members){
+        for(IUser user : this.members){
             if(user.getClassName().equals("Instructor"))
                 instructorNumber += 1;
             else if(user.getClassName().equals("Teaching Assistant"))
@@ -188,7 +188,7 @@ public class Team implements ITeam{
             char ch='"';
             List<String> participantIds = new ArrayList<String>();
             if (channel.getParticipants() != null){
-                for (User user : channel.getParticipants()) {
+                for (IUser user : channel.getParticipants()) {
                     participantIds.add(Integer.toString(user.getId()));
                 }
                 String participantsString = String.join(", ", participantIds);

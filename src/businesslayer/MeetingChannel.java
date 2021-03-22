@@ -9,7 +9,7 @@ public class MeetingChannel {
     private String channelName;
     private boolean isPrivate;
     private Meeting meeting;
-    private List<User> participants;
+    private List<IUser> participants;
 
     public MeetingChannel() {
         id++;
@@ -20,7 +20,7 @@ public class MeetingChannel {
         this.channelName = channelName;
         this.isPrivate = isPrivate;
         this.meeting = new Meeting(defaultChannelMeetingDate);
-        this.participants = new ArrayList<User>();
+        this.participants = new ArrayList<IUser>();
     }
 
     public static int getId() {
@@ -55,17 +55,17 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
-    public List<User> getParticipants() {
+    public List<IUser> getParticipants() {
         return participants;
     }
 
-    public void setParticipants(List<User> participants) {
+    public void setParticipants(List<IUser> participants) {
         this.participants = participants;
     }
 
-    public void addParticipant(User user) { this.participants.add(user); }
+    public void addParticipant(IUser user) { this.participants.add(user); }
 
-    public void removeParticipant(User user) { this.participants.remove(user); }
+    public void removeParticipant(IUser user) { this.participants.remove(user); }
 
     @Override
     public String toString() {
