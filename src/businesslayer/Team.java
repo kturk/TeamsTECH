@@ -77,7 +77,8 @@ public class Team implements ITeam{
 
     @Override
     public void removeMeetingChannel(MeetingChannel meetingChannel) {
-        if(this.meetingChannels.size() > 1){
+        if(this.meetingChannels.size() > 0 && meetingChannel != null){
+            System.out.println("sea");
             this.meetingChannels.remove(meetingChannel);
         }
     }

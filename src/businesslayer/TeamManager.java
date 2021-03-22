@@ -133,7 +133,7 @@ public class TeamManager {
 
     private void initializeTeamOwners(){
         for (User user : userList){
-            if (user.getClass().getSuperclass().getName().equals("businesslayer.Academician")){
+            if (user.getClass().getSuperclass().getName().equals("businesslayer.Academician")){ // TODO fix
                 List<ITeam> userTeams = user.getTeams();
                 for (ITeam team : userTeams){
                     team.addTeamOwner((Academician) user);
@@ -411,7 +411,7 @@ public class TeamManager {
     private void updateTeam(User loggedUser) {
         ITeam selectedTeam;
 
-        teamManagerView.getTeamIdToRemove();
+        teamManagerView.getTeamIdToUpdate();
         showTeamList();
         while(true){
             String teamId = teamManagerView.getUserInput(); // TODO check if exist
@@ -445,7 +445,7 @@ public class TeamManager {
             case 2:
                 removeMeetingChannel(loggedUser, selectedTeam); break;
             case 3:
-                updateMeetingChannel(); break;
+                updateMeetingChannel(loggedUser, selectedTeam); break;
             case 4:
                 addMember(); break;
             case 5:
@@ -465,7 +465,7 @@ public class TeamManager {
     private void addMeetingChannel(User loggedUser, ITeam selectedTeam){
         teamManagerView.getChannelName();
         String channelName = teamManagerView.getUserInput();
-        teamManagerView.getChannelMeetingDay();
+        teamManagerView.getChannelMeetingDayTime();
         String channelMeetingDayTime = teamManagerView.getUserInput();
 
         MeetingChannel meetingChannel = new MeetingChannel(channelName, true, channelMeetingDayTime);
@@ -474,10 +474,115 @@ public class TeamManager {
     }
 
     private void removeMeetingChannel(User loggedUser, ITeam selectedTeam){
-        System.out.println();
+        List<MeetingChannel> userChannels = getUserChannels(loggedUser, selectedTeam);
+        for (MeetingChannel channel : userChannels){
+            System.out.println(channel.getChannelName());
+        }
+        teamManagerView.getChannelNameToRemove();
+        String channelName = teamManagerView.getUserInput(); // TODO check if exist
+        MeetingChannel meetingChannel = getMeetingChannelByName(channelName, userChannels);
+        selectedTeam.removeMeetingChannel(meetingChannel);
+        writeTeamsToCSV();
     }
 
-    private void updateMeetingChannel(){
+    private List<MeetingChannel> getUserChannels(User loggedUser, ITeam selectedTeam) {
+        List<MeetingChannel> channels = selectedTeam.getMeetingChannels();
+        List<MeetingChannel> userChannels = new ArrayList<MeetingChannel>();
+        for (MeetingChannel channel : channels){
+            List<User> participants = channel.getParticipants();
+            for (User participant : participants){
+                if (loggedUser.equals(participant)){
+                    userChannels.add(channel);
+                }
+            }
+        }
+        return userChannels;
+    }
+
+    private MeetingChannel getMeetingChannelByName(String channelName, List<MeetingChannel> userChannels){
+        for (MeetingChannel channel : userChannels){
+            if (channel.getChannelName().equals(channelName))
+                return channel;
+        }
+        return null;
+    }
+
+    private void updateMeetingChannel(User loggedUser, ITeam selectedTeam){
+        List<MeetingChannel> userChannels = getUserChannels(loggedUser, selectedTeam);
+        for (MeetingChannel channel : userChannels){
+            System.out.println(channel.getChannelName());
+        }
+        teamManagerView.getChannelNameToUpdate();
+        String channelName = teamManagerView.getUserInput(); // TODO check if exist
+        MeetingChannel meetingChannel = getMeetingChannelByName(channelName, userChannels);
+        teamManagerView.promptUpdateMeetingChannelChoices();
+        int userUpdateMeetingChannelChoice = getUserUpdateMeetingChannelChoice();
+        performUserUpdateMeetingChoice(userUpdateMeetingChannelChoice, meetingChannel, loggedUser, selectedTeam);
+    }
+
+    private int getUserUpdateMeetingChannelChoice() {
+        String strInput = teamManagerView.getUserInput();
+        while (true) {
+            if (isNumeric(strInput)) {
+                int intInput = Integer.parseInt(strInput);
+                if (intInput >= 0 && intInput <= 3) {
+                    return intInput;
+                }
+            }
+        }
+    }
+
+    private void performUserUpdateMeetingChoice(int userChoice, MeetingChannel meetingChannel,
+                                                User loggedUser, ITeam selectedTeam){
+        switch (userChoice){
+            case 1:
+                addParticipant(meetingChannel, loggedUser, selectedTeam); break;
+            case 2:
+                removeParticipant(meetingChannel); break;
+            case 3:
+                updateMeetingDayTime(meetingChannel); break;
+        }
+    }
+
+    private void addParticipant(MeetingChannel meetingChannel, User loggedUser, ITeam selectedTeam){
+        List<User> teamMembers = selectedTeam.getMembers();
+        teamMembers.remove(loggedUser);
+        showMembers(teamMembers);
+        teamManagerView.getUserIdToAdd();
+        String userIds = teamManagerView.getUserInput();
+        String[] userIdArray = userIds.split(",");
+        addUsersToChannel(meetingChannel, userIdArray);
+    }
+
+    private void showMembers(List<User> teamMembers){
+        for (User user : teamMembers){
+            System.out.println(user.getId() + " - " + user.getName());
+        }
+    }
+
+    private void addUsersToChannel(MeetingChannel meetingChannel, String[] userIdArray){
+        for (String id : userIdArray){ // TODO check id exists
+            meetingChannel.addParticipant(getUserById(Integer.parseInt(id)));
+        }
+    }
+
+    private void removeParticipant(MeetingChannel meetingChannel){
+        List<User> channelParticipants = meetingChannel.getParticipants();
+        showMembers(channelParticipants);
+        teamManagerView.getUserIdToRemove();
+        String userIds = teamManagerView.getUserInput();
+        String[] userIdArray = userIds.split(",");
+        removeUsersToChannel(meetingChannel, userIdArray);
+        writeTeamsToCSV();
+    }
+
+    private void removeUsersToChannel(MeetingChannel meetingChannel, String[] userIdArray){
+        for (String id : userIdArray){ // TODO check id exists
+            meetingChannel.removeParticipant(getUserById(Integer.parseInt(id)));
+        }
+    }
+
+    private void updateMeetingDayTime(MeetingChannel meetingChannel){
         System.out.println();
     }
 

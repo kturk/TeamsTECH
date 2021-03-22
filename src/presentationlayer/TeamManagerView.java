@@ -87,14 +87,39 @@ public class TeamManagerView {
         System.out.println("Please enter name of the channel.: ");
     }
 
+    public void getChannelNameToRemove(){
+        System.out.println("Please enter name of the channel that you would like to remove.: ");
+    }
+
+    public void getChannelNameToUpdate(){
+        System.out.println("Please enter name of the channel that you would like to update.: ");
+    }
+
+    public void promptUpdateMeetingChannelChoices(){
+        System.out.println("What would you like to do? \n"
+                +                                 "1 -> Add a participant \n"
+                + 								  "2 -> Remove a participant \n"
+                + 								  "3 -> Update meeting day and time \n"
+                +  								  "0 -> Back \n"
+                +                                 "Please enter a number between 0-3: ");
+    }
+
 //    public void getIsChannelPrivate(){
 //        System.out.println("Will this channel be private one? (Y/n): ");
 //    }
 
-    public void getChannelMeetingDay(){
+    public void getChannelMeetingDayTime(){
         System.out.println("Please enter a day of week and a time for meeting channel \n" +
                 "(Ex. Monday 10.45 AM): \n" +
                 "(You can leave this field empty.)");
+    }
+
+    public void getUserIdToAdd(){
+        System.out.println("Please enter user ids to add into channel. (Ex. 45,97,33): ");
+    }
+
+    public void getUserIdToRemove(){
+        System.out.println("Please enter user ids to remove into channel. (Ex. 45,97,33): ");
     }
 
     public String getUserInput(){
