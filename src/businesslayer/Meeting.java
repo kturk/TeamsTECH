@@ -7,13 +7,11 @@ public class Meeting {
     private String date;
     private String time;
 
-    // TODO check this.id or not
     public Meeting() {
         id++;
     }
 
     public Meeting(String meetingDate) {
-        // TODO check this.id or not
         id++;
         setDateAndTime(meetingDate);
     }
@@ -43,7 +41,7 @@ public class Meeting {
         this.time = time;
     }
 
-    private void setDateAndTime(String meetingDate){
+    public void setDateAndTime(String meetingDate){
         if (meetingDate == null){
             this.date = "";
             this.time = "";

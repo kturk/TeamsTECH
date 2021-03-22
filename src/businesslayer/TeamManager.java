@@ -338,6 +338,7 @@ public class TeamManager {
                 }
                 catch (UnauthorizedUserOperationException ex){
                     System.err.println(ex);
+                    break;
                 }
             case 2:
                 try {
@@ -346,6 +347,7 @@ public class TeamManager {
                 }
                 catch (UnauthorizedUserOperationException ex){
                     System.err.println(ex);
+                    break;
                 }
             case 3:
                 updateTeam(loggedUser); break;
@@ -448,9 +450,22 @@ public class TeamManager {
             case 3:
                 updateMeetingChannel(loggedUser, selectedTeam); break;
             case 4:
-                addMember(); break;
+                try {
+                    addMember(loggedUser, selectedTeam);
+                    break;
+                }
+                catch (UnauthorizedUserOperationException ex){
+                    System.err.println(ex);
+                    break;
+                }
             case 5:
-                removeMember(); break;
+                try{
+                    removeMember(loggedUser, selectedTeam); break;
+                }
+                catch (UnauthorizedUserOperationException ex){
+                    System.err.println(ex);
+                    break;
+                }
             case 6:
                 addTeamOwner(loggedUser, selectedTeam); break;
             case 7:
@@ -584,15 +599,50 @@ public class TeamManager {
     }
 
     private void updateMeetingDayTime(MeetingChannel meetingChannel){
-        System.out.println();
+        teamManagerView.getChannelMeetingDayTime();
+        String dateTime = teamManagerView.getUserInput();
+        meetingChannel.getMeeting().setDateAndTime(dateTime);
     }
 
-    private void addMember(){
-        System.out.println();
+    private void addMember(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
+        if (loggedUser.getClassType().equals("Academician")){
+            List<User> temp = new ArrayList<User>(userList);
+            temp.removeAll(selectedTeam.getMembers());
+            showMembers(temp);
+            teamManagerView.getUserIdToAdd();
+            String userIds = teamManagerView.getUserInput();
+            String[] userIdArray = userIds.split(",");
+            addUsersToTeam(selectedTeam, userIdArray);
+        }
+        else{
+            throw new UnauthorizedUserOperationException("Only academicians can add new members.");
+        }
     }
 
-    private void removeMember(){
-        System.out.println();
+    private void addUsersToTeam(ITeam selectedTeam, String[] userIdArray){
+        for (String id : userIdArray){ // TODO check id exists
+            selectedTeam.addMember(getUserById(Integer.parseInt(id)));
+        }
+    }
+
+    private void removeMember(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
+        if (loggedUser.getClassType().equals("Academician")){
+            List<User> teamMembers = selectedTeam.getMembers();
+            showMembers(teamMembers);
+            teamManagerView.getUserIdToRemove();
+            String userIds = teamManagerView.getUserInput();
+            String[] userIdArray = userIds.split(",");
+            removeUsersFromTeam(selectedTeam, userIdArray);
+        }
+        else{
+            throw new UnauthorizedUserOperationException("Only academicians can remove members.");
+        }
+    }
+
+    private void removeUsersFromTeam((ITeam selectedTeam, String[] userIdArray){
+        for (String id : userIdArray){ // TODO check id exists
+            selectedTeam.removeMember(getUserById(Integer.parseInt(id)));
+        }
     }
 
     private void addTeamOwner(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
@@ -602,7 +652,7 @@ public class TeamManager {
             teamManagerView.getUserId();
             String userId = teamManagerView.getUserInput();
             boolean isValid = false;
-            if()
+//            if()
 
         }
         else{

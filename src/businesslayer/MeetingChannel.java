@@ -11,13 +11,11 @@ public class MeetingChannel {
     private Meeting meeting;
     private List<User> participants;
 
-    // TODO check this.id or not
     public MeetingChannel() {
         id++;
     }
 
     public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate) {
-        // TODO check this.id or not
         id++;
         this.channelName = channelName;
         this.isPrivate = isPrivate;

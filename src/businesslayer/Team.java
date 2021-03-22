@@ -142,7 +142,6 @@ public class Team implements ITeam{
         return defaultChannel;
     }
 
-    //TODO
     @Override
     public Hashtable<String, Integer> getDistinctNumbers() {
         int studentNumber = 0;
