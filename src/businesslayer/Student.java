@@ -18,4 +18,14 @@ public class Student extends User {
     public static String getDOMAIN() {
         return DOMAIN;
     }
+
+    @Override
+    public String getClassType() {
+        return "Student";
+    }
+
+    @Override
+    public String getClassName() {
+        return "Student";
+    }
 }

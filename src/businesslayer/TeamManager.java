@@ -5,6 +5,7 @@ import dataaccesslayer.DataHandler;
 import presentationlayer.TeamManagerView;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 public class TeamManager {
@@ -451,11 +452,11 @@ public class TeamManager {
             case 5:
                 removeMember(); break;
             case 6:
-                addTeamOwner(); break;
+                addTeamOwner(loggedUser, selectedTeam); break;
             case 7:
-                showMeetingChannelDetails(); break;
+                showMeetingChannelDetails(selectedTeam); break;
             case 8:
-                showDistinctNumbers(); break;
+                showDistinctNumbers(selectedTeam); break;
             case 0:
                 mainLoop(loggedUser); break;
 
@@ -594,16 +595,45 @@ public class TeamManager {
         System.out.println();
     }
 
-    private void addTeamOwner(){
+    private void addTeamOwner(User loggedUser, ITeam selectedTeam) throws UnauthorizedUserOperationException{
+        List<User> currentOwners = new ArrayList<User>();
+
+        if(currentOwners.contains(loggedUser)){
+            teamManagerView.getUserId();
+            String userId = teamManagerView.getUserInput();
+            boolean isValid = false;
+            if()
+
+        }
+        else{
+            throw new UnauthorizedUserOperationException();
+        }
         System.out.println();
     }
 
-    private void showMeetingChannelDetails(){
-        System.out.println();
+    private void showMeetingChannelDetails(ITeam selectedTeam){ //TODO getuserchannels add
+
+        List<MeetingChannel> meetingChannels = selectedTeam.getMeetingChannels();
+        meetingChannels.add(0, selectedTeam.getDefaultChannel());
+        for(MeetingChannel meetingChannel: meetingChannels){
+            System.out.println("Channel Name: " + meetingChannel.getChannelName());
+            System.out.println("Meeting Date and Time: " + meetingChannel.getMeeting().getDate() + " " + meetingChannel.getMeeting().getTime());
+            System.out.println("Participants:");
+
+            for(User user: meetingChannel.getParticipants()){
+                System.out.println("\t" + user.getName());
+            }
+            System.out.println();
+        }
     }
 
-    private void showDistinctNumbers(){
-        System.out.println();
+    private void showDistinctNumbers(ITeam selectedTeam){
+        Hashtable<String, Integer> distinctNumbers = selectedTeam.getDistinctNumbers();
+
+        System.out.println("Number of Students: " + distinctNumbers.get("Student").toString());
+        System.out.println("Number of Instructor: " + distinctNumbers.get("Instructor").toString());
+        System.out.println("Number of Teaching Assistants: " + distinctNumbers.get("Teaching Assistant").toString());
+
     }
 
     private void exitApplication(){

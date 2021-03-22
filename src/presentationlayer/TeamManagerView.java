@@ -103,6 +103,9 @@ public class TeamManagerView {
                 +  								  "0 -> Back \n"
                 +                                 "Please enter a number between 0-3: ");
     }
+    public void getUserId(){
+        System.out.println("Please enter the id of the user: ");
+    }
 
 //    public void getIsChannelPrivate(){
 //        System.out.println("Will this channel be private one? (Y/n): ");

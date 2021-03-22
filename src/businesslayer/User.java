@@ -102,16 +102,22 @@ public abstract class User {
         this.password = password;
     }
 
-    public String getClassType(){
-        String type = this.getClass().getName();
-        switch (type){
-            case "businesslayer.Instructor":
-            case "businesslayer.TeachingAssistant":
-                return "Academician";
-            default:
-                return "Student";
-        }
-    }
+//    public String getClassType(){
+//        String type = this.getClass().getName();
+//        switch (type){
+//            case "businesslayer.Instructor":
+//            case "businesslayer.TeachingAssistant":
+//                return "Academician";
+//            default:
+//                return "Student";
+//        }
+//    }
+
+    public abstract String getClassType();
+
+
+    public abstract String getClassName();
+
 
     public String toCSV() {
         StringBuilder builder = new StringBuilder();
