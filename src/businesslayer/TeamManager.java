@@ -647,7 +647,7 @@ public class TeamManager {
         }
     }
 
-    private void removeUsersFromTeam((ITeam selectedTeam, String[] userIdArray){
+    private void removeUsersFromTeam(ITeam selectedTeam, String[] userIdArray){
         for (String id : userIdArray){ // TODO check id exists
             selectedTeam.removeMember(getUserById(Integer.parseInt(id)));
         }
@@ -683,7 +683,7 @@ public class TeamManager {
                             teamManagerView.teamOwnerSuccess(newOwner.getName());
                         }
                         else{
-                            teamManagerView.userNotAMember(tempUser.getName());
+                            teamManagerView.notAvailableForOwner(tempUser.getName());
                         }
                     }
                 }

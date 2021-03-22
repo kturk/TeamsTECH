@@ -129,8 +129,8 @@ public class TeamManagerView {
         System.out.println("Please enter user ids to remove. (Ex. 45,97,33): ");
     }
 
-    public void userNotAMember(String name){
-        System.out.println(name + " is not a member of this team.");
+    public void notAvailableForOwner(String name){
+        System.out.println(name + " is not available to become an owner.");
     }
 
     public void teamOwnerSuccess(String name){
