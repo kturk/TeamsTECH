@@ -1,5 +1,6 @@
 package businesslayer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MeetingChannel {
@@ -8,19 +9,18 @@ public class MeetingChannel {
     private String channelName;
     private boolean isPrivate;
     private Meeting meeting;
-    private List<User> userList;
+    private List<IUser> participants;
 
-    // TODO check this.id or not
     public MeetingChannel() {
         id++;
     }
 
     public MeetingChannel(String channelName, boolean isPrivate, String defaultChannelMeetingDate) {
-        // TODO check this.id or not
         id++;
         this.channelName = channelName;
         this.isPrivate = isPrivate;
         this.meeting = new Meeting(defaultChannelMeetingDate);
+        this.participants = new ArrayList<IUser>();
     }
 
     public static int getId() {
@@ -55,13 +55,17 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
-    public List<User> getUserList() {
-        return userList;
+    public List<IUser> getParticipants() {
+        return participants;
     }
 
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
+    public void setParticipants(List<IUser> participants) {
+        this.participants = participants;
     }
+
+    public void addParticipant(IUser user) { this.participants.add(user); }
+
+    public void removeParticipant(IUser user) { this.participants.remove(user); }
 
     @Override
     public String toString() {
@@ -69,7 +73,7 @@ public class MeetingChannel {
                 "channelName='" + channelName + '\'' +
                 ", isPrivate=" + isPrivate +
                 ", meeting=" + meeting +
-                ", userList=" + userList +
+                ", userList=" + participants +
                 '}';
     }
 }

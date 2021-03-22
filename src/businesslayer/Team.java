@@ -10,8 +10,8 @@ public class Team implements ITeam{
     private String id;
     private MeetingChannel defaultChannel;
     private List<MeetingChannel> meetingChannels;
-    private List<Academician> owners;
-    private List<User> members;
+    private List<IUser> owners;
+    private List<IUser> members;
 
     public Team() {}
 
@@ -20,9 +20,8 @@ public class Team implements ITeam{
         this.name = name;
         this.defaultChannel = new MeetingChannel(defaultChannelName, false, defaultChannelMeetingDate);
         this.meetingChannels = new ArrayList<MeetingChannel>();
-        this.owners = new ArrayList<Academician>();
-        this.members = new ArrayList<User>();
-
+        this.owners = new ArrayList<IUser>();
+        this.members = new ArrayList<IUser>();
     }
 
     @Override
@@ -52,20 +51,20 @@ public class Team implements ITeam{
     }
 
     @Override
-    public List<Academician> getTeamOwners() {
+    public List<IUser> getTeamOwners() {
         return owners;
     }
 
-    public void setOwners(List<Academician> owners) {
+    public void setOwners(List<IUser> owners) {
         this.owners = owners;
     }
 
     @Override
-    public List<User> getMembers() {
+    public List<IUser> getMembers() {
         return members;
     }
 
-    public void setMembers(List<User> members) {
+    public void setMembers(List<IUser> members) {
         this.members = members;
     }
 
@@ -76,19 +75,20 @@ public class Team implements ITeam{
 
     @Override
     public void removeMeetingChannel(MeetingChannel meetingChannel) {
-        if(this.meetingChannels.size() > 1){
+        if(this.meetingChannels.size() > 0 && meetingChannel != null){
+            System.out.println("sea");
             this.meetingChannels.remove(meetingChannel);
         }
     }
 
     @Override
-    public void addParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
-        meetingChannel.getUserList().add(user);
+    public void addParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel) {
+        meetingChannel.getParticipants().add(user);
     }
 
     @Override
-    public void removeParticipantToMeetingChannel(User user, MeetingChannel meetingChannel) {
-        meetingChannel.getUserList().remove(user);
+    public void removeParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel) {
+        meetingChannel.getParticipants().remove(user);
     }
 
     @Override
@@ -102,12 +102,13 @@ public class Team implements ITeam{
     }
 
     @Override
-    public void addMember(User user) {
+    public void addMember(IUser user) {
         this.members.add(user);
+        this.getDefaultChannel().addParticipant(user);
     }
 
     @Override
-    public void removeMember(User user) {
+    public void removeMember(IUser user) {
         if(this.members.size() > 0){
             this.members.remove(user);
         }
@@ -120,8 +121,8 @@ public class Team implements ITeam{
 //    }
 
     @Override
-    public void addTeamOwner(Academician academician) {
-        this.getTeamOwners().add(academician);
+    public void addTeamOwner(IUser user) {
+        this.getTeamOwners().add(user);
     }
 
 
@@ -132,25 +133,86 @@ public class Team implements ITeam{
     }
 
     @Override
-    public List<User> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel) {
-        return meetingChannel.getUserList();
+    public List<IUser> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel) {
+        return meetingChannel.getParticipants();
     }
 
-    //TODO
+    @Override
+    public MeetingChannel getDefaultChannel() {
+        return defaultChannel;
+    }
+
     @Override
     public Hashtable<String, Integer> getDistinctNumbers() {
-        return null;
+        int studentNumber = 0;
+        int instructorNumber = 0;
+        int teachingAssistantNumber = 0;
+
+        for(IUser user : this.members){
+            if(user.getClassName().equals("Instructor"))
+                instructorNumber += 1;
+            else if(user.getClassName().equals("Teaching Assistant"))
+                teachingAssistantNumber += 1;
+            else
+                studentNumber += 1;
+        }
+
+        Hashtable<String, Integer> distinctNumbers = new Hashtable<String, Integer>();
+        distinctNumbers.put("Instructor", instructorNumber);
+        distinctNumbers.put("Teaching Assistant", teachingAssistantNumber);
+        distinctNumbers.put("Student", studentNumber);
+
+        return distinctNumbers;
     }
 
-//    @Override
-//    public String toString() {
-//        return "Team{" +
-//                "name='" + name + '\'' +
-//                ", id='" + id + '\'' +
-//                ", defaultChannel=" + defaultChannel +
-//                ", meetingChannels=" + meetingChannels +
-//                ", owners=" + owners +
-//                ", members=" + members +
-//                '}';
-//    }
+
+    public String toCSV() {
+        String name = this.name;
+        String id = this.id;
+        String defaultChannel = this.defaultChannel.getChannelName();
+        String defaultMeetingDay;
+        if (!this.defaultChannel.getMeeting().getDate().equals(""))
+            defaultMeetingDay = this.defaultChannel.getMeeting().getDate() + " " + this.defaultChannel.getMeeting().getTime();
+        else
+            defaultMeetingDay = "";
+        List<String> channelNames = new ArrayList<String>();
+        List<String> meetingDays = new ArrayList<String>();
+        List<String> participants = new ArrayList<String>();
+
+        for(MeetingChannel channel: this.meetingChannels){
+            channelNames.add(channel.getChannelName());
+            if (!channel.getMeeting().getDate().equals(""))
+                meetingDays.add(channel.getMeeting().getDate() + " " + channel.getMeeting().getTime());
+            else
+                meetingDays.add("");
+            char ch='"';
+            List<String> participantIds = new ArrayList<String>();
+            if (channel.getParticipants() != null){
+                for (IUser user : channel.getParticipants()) {
+                    participantIds.add(Integer.toString(user.getId()));
+                }
+                String participantsString = String.join(", ", participantIds);
+                participants.add(ch + participantsString + ch);
+            }
+            else
+                participants.add("");
+
+        }
+
+        String returnedString = name + "," + id + "," + defaultChannel + "," + defaultMeetingDay;
+
+        for(int i=0; i<channelNames.size(); i++) {
+            if(channelNames.get(i) != null) returnedString += "," + channelNames.get(i);
+            else returnedString += ",";
+
+            if(meetingDays.get(i) != null) returnedString += "," + meetingDays.get(i);
+            else returnedString += ",";
+
+            if(participants.get(i) != null) returnedString += "," + participants.get(i);
+            else returnedString += ",";
+
+        }
+
+        return returnedString;
+    }
 }

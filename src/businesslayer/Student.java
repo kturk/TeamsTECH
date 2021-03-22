@@ -12,9 +12,20 @@ public class Student extends User {
 
     public Student(int id, String name, String password, String department) {
         super(id, name, password, department);
+        super.initializeEmail(DOMAIN);
     }
 
     public static String getDOMAIN() {
         return DOMAIN;
+    }
+
+    @Override
+    public String getClassType() {
+        return "Student";
+    }
+
+    @Override
+    public String getClassName() {
+        return "Student";
     }
 }
