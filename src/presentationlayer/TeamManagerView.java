@@ -122,11 +122,11 @@ public class TeamManagerView {
     }
 
     public void getUserIdToAdd(){
-        System.out.println("Please enter user ids to add into channel. (Ex. 45,97,33): ");
+        System.out.println("Please enter user ids to add. (Ex. 45,97,33): ");
     }
 
     public void getUserIdToRemove(){
-        System.out.println("Please enter user ids to remove into channel. (Ex. 45,97,33): ");
+        System.out.println("Please enter user ids to remove. (Ex. 45,97,33): ");
     }
 
     public void userNotAMember(String name){
