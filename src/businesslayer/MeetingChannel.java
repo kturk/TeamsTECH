@@ -1,5 +1,7 @@
 package businesslayer;
 
+import java.util.List;
+
 public class MeetingChannel {
 
     private static int count = 0;
@@ -54,8 +56,20 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
+    public List<IUser> getParticipants(){
+        return manager.getChannelParticipants(this);
+    }
+
     public void addUser(IUser user){
         manager.addUserToChannel(user, this);
+    }
+
+    public void remove(){
+        manager.removeChannel(this);
+    }
+
+    public void removeParticipant(IUser user){
+        manager.removeUserFromChannel(user, this);
     }
 
     @Override

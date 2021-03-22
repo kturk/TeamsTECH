@@ -1,6 +1,5 @@
 package businesslayer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -93,16 +92,9 @@ public abstract class User implements IUser {
         return manager.getUserTeams(this);
     }
 
-//
-//    @Override
-//    public void setTeams(List<ITeam> teams) {
-//        this.teams = teams;
-//    }
-//
-//    @Override
-//    public void addTeam(ITeam team){
-//        this.teams.add(team);
-//    }
+    public List<MeetingChannel> getChannels(){
+        return manager.getUserChannels(this);
+    }
 
     @Override
     public void initializeEmail(String domain) {
@@ -126,10 +118,10 @@ public abstract class User implements IUser {
     @Override
     public String toCSV() {
         StringBuilder builder = new StringBuilder();
-        String classType = this.getClassType();
+        String classType = this.getClassName();
         if (classType.equals("Instructor"))
             builder.append("Instructor,");
-        else if (classType.equals("TeachingAssistant"))
+        else if (classType.equals("Teaching Assistant"))
             builder.append("Teaching Assistant,");
         else
             builder.append("Student,");
@@ -142,8 +134,6 @@ public abstract class User implements IUser {
         for (ITeam team : manager.getUserTeams(this))
             builder.append(",").append(team.getId());
 
-//        for (ITeam team : teams)
-//            builder.append("," + team.getId());
         return builder.toString();
     }
 }

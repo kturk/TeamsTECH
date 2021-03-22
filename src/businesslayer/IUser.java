@@ -23,13 +23,11 @@ public interface IUser {
 
     void setDepartment(String department);
 
-    public TeamManager getManager();
+    TeamManager getManager();
 
     List<ITeam> getTeams();
 
-    void setTeams(List<ITeam> teams);
-
-    void addTeam(ITeam team);
+    List<MeetingChannel> getChannels();
 
     void initializeEmail(String domain);
 

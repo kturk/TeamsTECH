@@ -145,7 +145,12 @@ public class TeamManagerView {
         return keyboard.nextLine();
     } // TODO boolean isRequired attribute
 
+    public void defaultChannelHasAll(){
+        System.out.println("Default channel has already all participants from the team.");
+    }
+
     public void exitMessage() {
         System.out.println("Thank you for using TeamsTECH application.");
     }
+
 }

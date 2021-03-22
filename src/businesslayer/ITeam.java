@@ -5,43 +5,31 @@ import java.util.List;
 
 public interface ITeam {
 
-    public void addMeetingChannel(MeetingChannel meetingChannel);
+    void addMeetingChannel(MeetingChannel meetingChannel);
 
-    public void removeMeetingChannel(MeetingChannel meetingChannel);
+    void removeMeetingChannel(MeetingChannel meetingChannel);
 
-    public void addParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel);
+    void addMember(IUser user);
 
-    public void removeParticipantToMeetingChannel(IUser user, MeetingChannel meetingChannel);
+    List<IUser> getMembers();
 
-    public void updateMeetingDayOfMeetingChannel(String localDate, MeetingChannel meetingChannel);
+    String getName();
 
-    public void updateMeetingTimeOfMeetingChannel(String localTime, MeetingChannel meetingChannel);
+    void removeMember(IUser user);
 
-    public void addMember(IUser user);
+    List<IUser> getTeamOwners();
 
-    public List<IUser> getMembers();
+    void addTeamOwner(IUser user);
 
-    public String getName();
+    List<MeetingChannel> getMeetingChannels();
 
-    public void removeMember(IUser user);
+    void remove();
 
-    public List<IUser> getTeamOwners();
+    Hashtable<String, Integer> getDistinctNumbers();
 
-    public void addTeamOwner(IUser user);
+    MeetingChannel getDefaultChannel();
 
-    public List<MeetingChannel> getMeetingChannels();
+    String getId();
 
-    public void remove();
-
-    public String getMeetingTimeOfMeetingChannel(MeetingChannel meetingChannel);
-
-    public List<IUser> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel);
-
-    public Hashtable<String, Integer> getDistinctNumbers();
-
-    public MeetingChannel getDefaultChannel();
-
-    public String getId();
-
-    public String toCSV();
+    String toCSV();
 }

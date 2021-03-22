@@ -27,20 +27,6 @@ public class FileIOManager {
         return temp;
     }
 
-    public static void createFile(String filePath) {
-        try {
-            File myObj = new File(filePath);
-            if (myObj.createNewFile()) {
-                System.out.println("File created: " + myObj.getName());
-            }
-            else {
-                System.out.println("File already exists.");
-            }
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
 
     public static void setLines(String filePath, List<String> lines) {
         try {
@@ -50,7 +36,6 @@ public class FileIOManager {
                 myWriter.write(System.getProperty( "line.separator" ));
             }
             myWriter.close();
-            System.out.println("Successfully wrote to the file.");
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
