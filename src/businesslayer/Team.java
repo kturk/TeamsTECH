@@ -10,7 +10,7 @@ public class Team implements ITeam{
     private String id;
     private MeetingChannel defaultChannel;
     private List<MeetingChannel> meetingChannels;
-    private List<Academician> owners;
+    private List<User> owners;
     private List<User> members;
 
     public Team() {}
@@ -20,10 +20,8 @@ public class Team implements ITeam{
         this.name = name;
         this.defaultChannel = new MeetingChannel(defaultChannelName, false, defaultChannelMeetingDate);
         this.meetingChannels = new ArrayList<MeetingChannel>();
-        this.owners = new ArrayList<Academician>();
+        this.owners = new ArrayList<User>();
         this.members = new ArrayList<User>();
-
-
     }
 
     @Override
@@ -53,11 +51,11 @@ public class Team implements ITeam{
     }
 
     @Override
-    public List<Academician> getTeamOwners() {
+    public List<User> getTeamOwners() {
         return owners;
     }
 
-    public void setOwners(List<Academician> owners) {
+    public void setOwners(List<User> owners) {
         this.owners = owners;
     }
 
@@ -105,6 +103,7 @@ public class Team implements ITeam{
     @Override
     public void addMember(User user) {
         this.members.add(user);
+        this.getDefaultChannel().addParticipant(user);
     }
 
     @Override
@@ -137,10 +136,33 @@ public class Team implements ITeam{
         return meetingChannel.getParticipants();
     }
 
+    @Override
+    public MeetingChannel getDefaultChannel() {
+        return defaultChannel;
+    }
+
     //TODO
     @Override
     public Hashtable<String, Integer> getDistinctNumbers() {
-        return null;
+        int studentNumber = 0;
+        int instructorNumber = 0;
+        int teachingAssistantNumber = 0;
+
+        for(User user: this.members){
+            if(user.getClassName().equals("Instructor"))
+                instructorNumber += 1;
+            else if(user.getClassName().equals("Teaching Assistant"))
+                teachingAssistantNumber += 1;
+            else
+                studentNumber += 1;
+        }
+
+        Hashtable<String, Integer> distinctNumbers = new Hashtable<String, Integer>();
+        distinctNumbers.put("Instructor", instructorNumber);
+        distinctNumbers.put("Teaching Assistant", teachingAssistantNumber);
+        distinctNumbers.put("Student", studentNumber);
+
+        return distinctNumbers;
     }
 
 

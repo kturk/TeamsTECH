@@ -87,6 +87,11 @@ public class TeamManagerView {
         System.out.println("Please enter name of the channel.: ");
     }
 
+    public void getUserId(){
+        System.out.println("Please enter the id of the user: ");
+    }
+
+
 //    public void getIsChannelPrivate(){
 //        System.out.println("Will this channel be private one? (Y/n): ");
 //    }

@@ -25,7 +25,7 @@ public interface ITeam {
 
     public void removeMember(User user);
 
-    public List<Academician> getTeamOwners();
+    public List<User> getTeamOwners();
 
     public void addTeamOwner(Academician academician);
 
@@ -36,6 +36,8 @@ public interface ITeam {
     public List<User> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel);
 
     public Hashtable<String, Integer> getDistinctNumbers();
+
+    public MeetingChannel getDefaultChannel();
 
     public String getId();
 

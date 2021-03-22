@@ -1,5 +1,6 @@
 package businesslayer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MeetingChannel {
@@ -21,6 +22,7 @@ public class MeetingChannel {
         this.channelName = channelName;
         this.isPrivate = isPrivate;
         this.meeting = new Meeting(defaultChannelMeetingDate);
+        this.participants = new ArrayList<User>();
     }
 
     public static int getId() {

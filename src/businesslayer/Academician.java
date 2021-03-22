@@ -18,4 +18,9 @@ public abstract class Academician extends User {
     public static String getDOMAIN() {
         return DOMAIN;
     }
+
+    @Override
+    public String getClassType() {
+        return "Academician";
+    }
 }
