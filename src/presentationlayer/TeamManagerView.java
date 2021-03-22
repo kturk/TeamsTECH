@@ -77,7 +77,7 @@ public class TeamManagerView {
                 +  								  "4 -> Add a member \n"
                 +  								  "5 -> Remove a member \n"
                 +  								  "6 -> Add a team owner \n"
-                +  								  "7 -> Show meeting channels and their meetings \n" // TODO check private
+                +  								  "7 -> Show meeting channels and their meetings \n"
                 +  								  "8 -> Show distinct number of members \n"
                 +  								  "0 -> Back \n"
                 +                                 "Please enter a number between 0-8: ");
@@ -143,7 +143,7 @@ public class TeamManagerView {
 
     public String getUserInput(){
         return keyboard.nextLine();
-    } // TODO boolean isRequired attribute
+    }
 
     public void defaultChannelHasAll(){
         System.out.println("Default channel has already all participants from the team.");

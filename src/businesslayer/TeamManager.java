@@ -8,9 +8,6 @@ import java.util.*;
 
 public class TeamManager {
 
-    // TODO input validation check (empty day)
-    // TODO success and failure messages
-    // TODO backing from any screen
 
     private static final String teamPath = "teamList.csv";
     private static final String userPath = "userList.csv";
@@ -480,8 +477,6 @@ public class TeamManager {
             newTeam.addMeetingChannel(channel);
 
             writeTeamsToCSV();
-
-            // TODO max elems in csv to see all in data mode
         }
         else {
             throw new UnauthorizedUserOperationException("Only instructors can create new teams.");
@@ -509,7 +504,7 @@ public class TeamManager {
     }
 
 
-    private void showTeamList(IUser loggedUser){ // TODO should this be in view?
+    private void showTeamList(IUser loggedUser){
         System.out.println("ID - TEAM NAME");
         for (ITeam team : loggedUser.getTeams()){
             System.out.println(team.getId() + " - " + team.getName());
@@ -520,7 +515,7 @@ public class TeamManager {
         for (IUser user : userList){
             List<ITeam> userTeams = user.getTeams();
             if (userTeams.contains(teamToRemove))
-                userTeams.remove(teamToRemove); // TODO warn user about wrong input (else)
+                userTeams.remove(teamToRemove);
         }
     }
 
@@ -534,7 +529,7 @@ public class TeamManager {
             selectedTeam = getTeamById(teamId);
             if (selectedTeam != null)
                 break;
-            teamManagerView.wrongInput(); // TODO exit without getting id
+            teamManagerView.wrongInput();
         }
 
         teamManagerView.promptUpdateTeamChoices();
@@ -619,7 +614,7 @@ public class TeamManager {
             System.out.println(channel.getChannelName());
         }
         teamManagerView.getChannelNameToRemove();
-        String channelName = teamManagerView.getUserInput(); // TODO check if exist
+        String channelName = teamManagerView.getUserInput();
         MeetingChannel meetingChannel = getMeetingChannelByName(channelName, userChannels);
         selectedTeam.removeMeetingChannel(meetingChannel);
         meetingChannel.remove();
@@ -654,7 +649,7 @@ public class TeamManager {
             System.out.println(channel.getChannelName());
         }
         teamManagerView.getChannelNameToUpdate();
-        String channelName = teamManagerView.getUserInput(); // TODO check if exist
+        String channelName = teamManagerView.getUserInput();
         MeetingChannel meetingChannel = getMeetingChannelByName(channelName, userChannels);
         teamManagerView.promptUpdateMeetingChannelChoices();
         int userUpdateMeetingChannelChoice = getUserUpdateMeetingChannelChoice();
@@ -706,7 +701,7 @@ public class TeamManager {
     }
 
     private void addUsersToChannel(MeetingChannel meetingChannel, String[] userIdArray){
-        for (String id : userIdArray){ // TODO check id exists
+        for (String id : userIdArray){
             meetingChannel.addUser(getUserById(Integer.parseInt(id)));
         }
     }
@@ -723,7 +718,7 @@ public class TeamManager {
     }
 
     private void removeUsersFromChannel(MeetingChannel meetingChannel, String[] userIdArray){
-        for (String id : userIdArray){ // TODO check id exists
+        for (String id : userIdArray){
             meetingChannel.removeParticipant(getUserById(Integer.parseInt(id)));
         }
     }
@@ -756,7 +751,7 @@ public class TeamManager {
     }
 
     private void addUsersToTeam(ITeam selectedTeam, String[] userIdArray){
-        for (String id : userIdArray){ // TODO check id exists
+        for (String id : userIdArray){
             selectedTeam.addMember(getUserById(Integer.parseInt(id)));
         }
     }
@@ -777,7 +772,7 @@ public class TeamManager {
     }
 
     private void removeUsersFromTeam(ITeam selectedTeam, String[] userIdArray){
-        for (String id : userIdArray){ // TODO check id exists
+        for (String id : userIdArray){
             IUser user = getUserById(Integer.parseInt(id));
             selectedTeam.removeMember(user);
             List<MeetingChannel> channels = user.getChannels();
@@ -833,7 +828,7 @@ public class TeamManager {
         }
     }
 
-    private void showMeetingChannelDetails(ITeam selectedTeam){ //TODO getuserchannels add
+    private void showMeetingChannelDetails(ITeam selectedTeam){
 
         List<MeetingChannel> meetingChannels = selectedTeam.getMeetingChannels();
         meetingChannels.add(0, selectedTeam.getDefaultChannel());
