@@ -1,19 +1,22 @@
 package businesslayer;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 public class Team implements ITeam{
 
     private String name;
     private String id;
+    private TeamManager manager;
 
-    public Team() {}
+    public Team(TeamManager manager) {
+        this.manager = manager;
+    }
 
-    public Team(String name, String id) {
+    public Team(String name, String id, TeamManager manager) {
         this.id = id;
         this.name = name;
+        this.manager = manager;
     }
 
     @Override
@@ -29,8 +32,18 @@ public class Team implements ITeam{
         return name;
     }
 
+    @Override
+    public List<IUser> getTeamOwners() {
+        return manager.getTeamOwners(this);
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public void addMeetingChannel(MeetingChannel meetingChannel) {
+        manager.addChannelToTeam(meetingChannel, this);
     }
 
     @Override
@@ -54,8 +67,13 @@ public class Team implements ITeam{
     }
 
     @Override
+    public void addMember(IUser user) {
+        manager.addUserToTeam(user, this);
+    }
+
+    @Override
     public void addTeamOwner(IUser user) {
-        this.getTeamOwners().add(user);
+        manager.addOwnerToTeam(user, this);
     }
 
 
@@ -69,6 +87,9 @@ public class Team implements ITeam{
         return meetingChannel.getParticipants();
     }
 
+    public void remove(){
+        manager.removeTeam(this);
+    }
 //    @Override
 //    public Hashtable<String, Integer> getDistinctNumbers() {
 //        int studentNumber = 0;
@@ -93,10 +114,26 @@ public class Team implements ITeam{
 //    }
 
     public String toCSV() {
-        String name = this.name;
-        String id = this.id;
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.name).append(",");
+        builder.append(this.id).append(",");
 
-        return name + "," + id;
+        for (MeetingChannel channel : manager.getTeamChannels(this)){
+            builder.append(channel.getChannelName()).append(",");
+            builder.append(channel.getMeeting().getDateTime());
+            List<IUser> channelParticipants = manager.getChannelParticipants(channel);
+            // if (!channelParticipants == null)
+            List<String> participantIds = new ArrayList<String>();
+            for (IUser user : channelParticipants)
+                participantIds.add(Integer.toString(user.getId()));
+            String participantIdString = String.join(", ", participantIds);
+            char ch='"';
+            participantIdString = "," + ch + participantIdString + ch;
+            builder.append(participantIdString);
+
+        }
+        return builder.toString();
+
     }
 
 //    public String toCSV() {

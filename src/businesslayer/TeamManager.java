@@ -4,6 +4,7 @@ import businesslayer.exceptions.UnauthorizedUserOperationException;
 import dataaccesslayer.DataHandler;
 import presentationlayer.TeamManagerView;
 
+import javax.swing.plaf.IconUIResource;
 import java.util.*;
 
 public class TeamManager {
@@ -58,7 +59,7 @@ public class TeamManager {
             ITeam tempTeam;
             String teamName = teamLine.get(0);
             String teamId = teamLine.get(1);
-            tempTeam = new Team(teamName, teamId);
+            tempTeam = new Team(teamName, teamId, this);
             this.teamList.add(tempTeam);
 
             String defaultChannelName = teamLine.get(2);
@@ -180,11 +181,11 @@ public class TeamManager {
     private IUser createInstructor(List<Integer> userIdList, String userName, String userId, String userPassword) {
         IUser temp;
         if (!userId.equals("")) {
-            temp = new Instructor(Integer.parseInt(userId), userName, userPassword, "Computer Engineering");
+            temp = new Instructor(Integer.parseInt(userId), userName, userPassword, "Computer Engineering", this);
             userIdList.add(Integer.parseInt(userId));
         } else {
             int id = getUniqueId(userIdList);
-            temp = new Instructor(id, userName, "Computer Engineering");
+            temp = new Instructor(id, userName, "Computer Engineering", this);
             userIdList.add(id);
         }
         return temp;
@@ -193,11 +194,11 @@ public class TeamManager {
     private IUser createTA(List<Integer> userIdList, String userName, String userId, String userPassword) {
         IUser temp;
         if (!userId.equals("")) {
-            temp = new TeachingAssistant(Integer.parseInt(userId), userName, userPassword, "Computer Engineering");
+            temp = new TeachingAssistant(Integer.parseInt(userId), userName, userPassword, "Computer Engineering", this);
             userIdList.add(Integer.parseInt(userId));
         } else {
             int id = getUniqueId(userIdList);
-            temp = new TeachingAssistant(id, userName, "Computer Engineering");
+            temp = new TeachingAssistant(id, userName, "Computer Engineering", this);
             userIdList.add(id);
         }
         return temp;
@@ -206,11 +207,11 @@ public class TeamManager {
     private IUser createStudent(List<Integer> userIdList, String userName, String userId, String userPassword) {
         IUser temp;
         if (!userId.equals("")) {
-            temp = new Student(Integer.parseInt(userId), userName, userPassword, "Computer Engineering");
+            temp = new Student(Integer.parseInt(userId), userName, userPassword, "Computer Engineering", this);
             userIdList.add(Integer.parseInt(userId));
         } else {
             int id = getUniqueId(userIdList);
-            temp = new Student(id, userName, "Computer Engineering");
+            temp = new Student(id, userName, "Computer Engineering", this);
             userIdList.add(id);
         }
         return temp;
@@ -225,23 +226,6 @@ public class TeamManager {
                 isUnique = true;
         }
         return randomId;
-    }
-
-
-    public List<ITeam> getTeamList() {
-        return teamList;
-    }
-
-    public void setTeamList(List<ITeam> teamList) {
-        this.teamList = teamList;
-    }
-
-    public List<IUser> getUserList() {
-        return userList;
-    }
-
-    public void setUserList(List<IUser> userList) {
-        this.userList = userList;
     }
 
     private ITeam getTeamById(String id) {
@@ -293,6 +277,55 @@ public class TeamManager {
         userDataHandler.writeData(users);
     }
 
+    public List<ITeam> getUserTeams(IUser user){
+        List<ITeam> teams = new ArrayList<ITeam>();
+        for (Map.Entry<ITeam, List<IUser>> entry : teamUserMap.entrySet()){
+            for (IUser currentUser : entry.getValue()){
+                if (currentUser.equals(user))
+                    teams.add(entry.getKey());
+            }
+        }
+        return teams;
+    }
+
+    public List<MeetingChannel> getTeamChannels(ITeam team){
+        for (Map.Entry<ITeam, List<MeetingChannel>> entry : teamChannelMap.entrySet()){
+            if (entry.getKey().equals(team))
+                return entry.getValue();
+        }
+        return null;
+    }
+
+    public List<IUser> getChannelParticipants(MeetingChannel channel){
+        for (Map.Entry<MeetingChannel, List<IUser>> entry : channelUserMap.entrySet()){
+            if (entry.getKey().equals(channel))
+                return entry.getValue();
+        }
+        return null;
+    }
+
+    public List<IUser> getTeamOwners(ITeam team){
+        for (Map.Entry<ITeam, List<IUser>> entry : teamOwnerMap.entrySet()){
+            if (entry.getKey().equals(team))
+                return entry.getValue();
+        }
+        return null;
+    }
+
+    public void removeTeam(ITeam team){
+        List<MeetingChannel> channels = getTeamChannels(team);
+        for (MeetingChannel channel : channels){
+            removeChannel(channel);
+        }
+        teamUserMap.remove(team); teamChannelMap.remove(team); teamOwnerMap.remove(team);
+        teamList.remove(team);
+
+    }
+
+    public void removeChannel(MeetingChannel channel) {
+        channelUserMap.remove(channel);
+    }
+
     // View Connection
 
     public void start(){
@@ -311,20 +344,21 @@ public class TeamManager {
 
 
     private IUser credentialsCheck(){
-        teamManagerView.getEmail();
-        String email = teamManagerView.getUserInput();
-        teamManagerView.getPassword();
-        String password = teamManagerView.getUserInput();
-        IUser loggedUser = getUserByCredentials(email, password);
+        while (true){
+            teamManagerView.getEmail();
+            String email = teamManagerView.getUserInput();
+            teamManagerView.getPassword();
+            String password = teamManagerView.getUserInput();
+            IUser loggedUser = getUserByCredentials(email, password);
 
-        if (loggedUser != null) {
-            teamManagerView.correctCredentials(loggedUser.getName());
+            if (loggedUser != null) {
+                teamManagerView.correctCredentials(loggedUser.getName());
+                return loggedUser;
+            }
+            else {
+                teamManagerView.wrongCredentials();
+            }
         }
-        else{
-            teamManagerView.wrongCredentials();
-            credentialsCheck(); // TODO recursion to while
-        }
-        return loggedUser;
     }
 
     private IUser getUserByCredentials(String email, String password) {
@@ -389,20 +423,47 @@ public class TeamManager {
         }
     }
 
+    public void addUserToTeam(IUser loggedUser, ITeam team){
+        List<IUser> members = new ArrayList<IUser>();
+        members.add(loggedUser);
+        teamUserMap.put(team, members);
+    }
+
+    public void addOwnerToTeam(IUser loggedUser, ITeam team){
+        List<IUser> members = new ArrayList<IUser>();
+        members.add(loggedUser);
+        teamOwnerMap.put(team, members);
+    }
+
+    public void addUserToChannel(IUser loggedUser, MeetingChannel channel){
+        List<IUser> members = new ArrayList<IUser>();
+        members.add(loggedUser);
+        channelUserMap.put(channel, members);
+    }
+
+    public void addChannelToTeam(MeetingChannel channel, ITeam team){
+        List<MeetingChannel> channels = new ArrayList<MeetingChannel>();
+        channels.add(channel);
+        teamChannelMap.put(team, channels);
+    }
+
     private void addTeam(IUser loggedIUser) throws UnauthorizedUserOperationException {
         if (loggedIUser.getClassType().equals("Academician")){
-            teamManagerView.getTeamName();
-            String teamName = teamManagerView.getUserInput();
-            teamManagerView.getTeamId();
-            String teamId = teamManagerView.getUserInput();
-            teamManagerView.getDefaultChannelName();
-            String defaultChannelName = teamManagerView.getUserInput();
-            teamManagerView.getDefaultMeetingDayTime(); // TODO Check valid week day
-            String meetingDayTime = teamManagerView.getUserInput();
+            teamManagerView.getTeamName(); String teamName = teamManagerView.getUserInput();
+            teamManagerView.getTeamId(); String teamId = teamManagerView.getUserInput();
+            teamManagerView.getDefaultChannelName(); String defaultChannelName = teamManagerView.getUserInput();
+            teamManagerView.getDefaultMeetingDayTime(); String meetingDayTime = teamManagerView.getUserInput();
 
-            ITeam newTeam = new Team(teamName, teamId);
-            newTeam.addTeamOwner((Academician) loggedIUser);
+            ITeam newTeam = new Team(teamName, teamId, this);
             teamList.add(newTeam);
+            newTeam.addMember(loggedIUser);
+            newTeam.addTeamOwner(loggedIUser);
+
+            MeetingChannel channel = new MeetingChannel(defaultChannelName, true, meetingDayTime, this);
+            channel.addUser(loggedIUser);
+
+            newTeam.addMeetingChannel(channel);
+
             writeTeamsToCSV();
 
             // TODO max elems in csv to see all in data mode
@@ -413,14 +474,21 @@ public class TeamManager {
 
     }
 
-    private void removeTeam(IUser loggedIUser) throws UnauthorizedUserOperationException{
-        showTeamList();
-        teamManagerView.getTeamIdToRemove();
-        String teamId = teamManagerView.getUserInput();
-        ITeam teamToRemove = getTeamById(teamId);
-        if (teamToRemove.getTeamOwners().contains(loggedIUser)) {
-            removeTeamFromUsers(teamToRemove);
-            this.teamList.remove(teamToRemove);
+    private void removeTeam(IUser loggedUser) throws UnauthorizedUserOperationException{
+        ITeam teamToRemove;
+        while (true){
+            showTeamList(loggedUser);
+            teamManagerView.getTeamIdToRemove();
+            String teamId = teamManagerView.getUserInput();
+            teamToRemove = getTeamById(teamId);
+            if (loggedUser.getTeams().contains(teamToRemove))
+                break;
+        }
+
+        if (teamToRemove.getTeamOwners().contains(loggedUser)) {
+//            removeTeamFromUsers(teamToRemove);
+//            this.teamList.remove(teamToRemove);
+            teamToRemove.remove();
             writeTeamsToCSV();
             writeUsersToCSV();
         }
@@ -429,9 +497,10 @@ public class TeamManager {
         }
     }
 
-    private void showTeamList(){ // TODO should this be in view?
+
+    private void showTeamList(IUser loggedUser){ // TODO should this be in view?
         System.out.println("ID - TEAM NAME");
-        for (ITeam team : teamList){
+        for (ITeam team : loggedUser.getTeams()){
             System.out.println(team.getId() + " - " + team.getName());
         }
     }

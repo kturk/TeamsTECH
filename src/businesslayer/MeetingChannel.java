@@ -54,6 +54,10 @@ public class MeetingChannel {
         this.meeting = meeting;
     }
 
+    public void addUser(IUser user){
+        manager.addUserToChannel(user, this);
+    }
+
     @Override
     public String toString() {
         return "MeetingChannel{" +

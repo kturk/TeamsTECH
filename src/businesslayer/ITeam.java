@@ -31,6 +31,8 @@ public interface ITeam {
 
     public List<MeetingChannel> getMeetingChannels();
 
+    public void remove();
+
     public String getMeetingTimeOfMeetingChannel(MeetingChannel meetingChannel);
 
     public List<IUser> getParticipantsOfMeetingChannel(MeetingChannel meetingChannel);

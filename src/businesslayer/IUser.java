@@ -23,6 +23,8 @@ public interface IUser {
 
     void setDepartment(String department);
 
+    public TeamManager getManager();
+
     List<ITeam> getTeams();
 
     void setTeams(List<ITeam> teams);
